@@ -1,5 +1,5 @@
-import { Cesium } from "cesium";
 import { CoordinateUtils } from "../utils/coordinates.js";
+import * as Cesium from "cesium";
 
 export class Aircraft {
     constructor(id, callsign, latitude, longitude, altitude, heading) {

@@ -1,6 +1,6 @@
 export const CESIUM_CONFIG = {
     ion: {
-        defaultAccessToken: process.env.CESIUM_TOKEN,
+        defaultAccessToken: import.meta.env.VITE_CESIUM_TOKEN,
     },
     viewer: {
         animation: false,

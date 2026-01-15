@@ -1,6 +1,6 @@
-import { Cesium } from "cesium";
 import { TimeUtils } from '../utils/time-utils.js';
 import { Position } from '../models/position.js';
+import * as Cesium from "cesium";
 
 export class MoonService {
   /**

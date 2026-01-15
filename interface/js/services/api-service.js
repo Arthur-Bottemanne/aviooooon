@@ -1,4 +1,3 @@
-// Generic API service for HTTP requests
 import { API_ENDPOINTS } from "../config/cesium-config.js";
 
 export class ApiService {

@@ -1,5 +1,5 @@
 import { CESIUM_CONFIG } from "../config/cesium-config.js";
-import { Cesium } from "cesium";
+import * as Cesium from "cesium";
 
 export class CameraManager {
     constructor(viewer) {

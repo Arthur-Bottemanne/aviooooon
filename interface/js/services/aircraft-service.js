@@ -1,4 +1,3 @@
-// Handles aircraft data fetching and processing
 import { API_ENDPOINTS } from "../config/cesium-config.js";
 import { Aircraft } from "../models/aircraft.js";
 

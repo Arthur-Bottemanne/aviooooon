@@ -7,7 +7,7 @@ export class ViewerManager {
         this.viewer = null;
     }
 
-    initialize() {
+    async initialize() {
         if (this.viewer) {
             console.warn("Viewer already initialized");
             return this.viewer;
@@ -15,13 +15,24 @@ export class ViewerManager {
 
         Cesium.Ion.defaultAccessToken = CESIUM_CONFIG.ion.defaultAccessToken;
 
-        this.viewer = new Cesium.Viewer(this.containerId, {
-            ...CESIUM_CONFIG.viewer,
-            terrainProvider: Cesium.createWorldTerrain(CESIUM_CONFIG.terrain),
-        });
+        try {
+            const terrainProvider = await Cesium.CesiumTerrainProvider.fromIonAssetId(1);
 
-        this._setupScene();
-        return this.viewer;
+            this.viewer = new Cesium.Viewer(this.containerId, {
+                ...CESIUM_CONFIG.viewer,
+                terrainProvider: terrainProvider,
+            });
+
+            this._setupScene();
+            return this.viewer;
+        } catch (error) {
+            console.error("Failed to initialize Cesium Terrain:", error);
+            this.viewer = new Cesium.Viewer(this.containerId, {
+                ...CESIUM_CONFIG.viewer,
+            });
+            this._setupScene();
+            return this.viewer;
+        }
     }
 
     _setupScene() {
