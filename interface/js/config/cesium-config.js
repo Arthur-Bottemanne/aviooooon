@@ -24,6 +24,6 @@ export const CESIUM_CONFIG = {
 };
 
 export const API_ENDPOINTS = {
-    aircraft: "https://api.example.com/aircraft",
-    moon: "https://api.example.com/moon",
+    aircraft: import.meta.env.VITE_BASE_API_URL + "/aircraft",
+    moon: import.meta.env.VITE_BASE_API_URL + "/moon",
 };

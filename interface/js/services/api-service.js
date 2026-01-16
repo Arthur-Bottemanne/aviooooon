@@ -1,20 +1,16 @@
 import { API_ENDPOINTS } from "../config/cesium-config.js";
 
 export class ApiService {
-    constructor(baseUrl = "") {
-        this.baseUrl = baseUrl;
+    constructor() {
+        this.baseUrl = import.meta.env.VITE_BASE_API_URL;
         this.defaultHeaders = {
             "Content-Type": "application/json",
         };
     }
 
-    /**
-     * Generic GET request
-     */
     async get(endpoint, params = {}, headers = {}) {
         const url = new URL(endpoint, this.baseUrl);
 
-        // Add query parameters
         Object.keys(params).forEach((key) => {
             if (params[key] !== null && params[key] !== undefined) {
                 url.searchParams.append(key, params[key]);
@@ -33,9 +29,6 @@ export class ApiService {
         }
     }
 
-    /**
-     * Generic POST request
-     */
     async post(endpoint, data = {}, headers = {}) {
         try {
             const response = await fetch(`${this.baseUrl}${endpoint}`, {
@@ -50,9 +43,6 @@ export class ApiService {
         }
     }
 
-    /**
-     * Handle HTTP response
-     */
     async handleResponse(response) {
         if (!response.ok) {
             const errorBody = await response.text();
@@ -67,9 +57,6 @@ export class ApiService {
         return await response.text();
     }
 
-    /**
-     * Handle errors consistently
-     */
     handleError(error) {
         if (error.name === "AbortError") {
             return new Error("Request was aborted");
@@ -82,9 +69,6 @@ export class ApiService {
         return error;
     }
 
-    /**
-     * Request with timeout
-     */
     async getWithTimeout(endpoint, params = {}, timeoutMs = 10000) {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
@@ -108,9 +92,6 @@ export class ApiService {
         }
     }
 
-    /**
-     * Batch multiple requests
-     */
     async batchGet(endpoints) {
         try {
             const promises = endpoints.map((endpoint) => this.get(endpoint));
@@ -122,7 +103,6 @@ export class ApiService {
     }
 }
 
-// Example usage specific API services extending base ApiService
 export class AircraftApiService extends ApiService {
     constructor() {
         super(API_ENDPOINTS.aircraft);

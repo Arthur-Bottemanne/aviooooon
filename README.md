@@ -24,11 +24,12 @@ cd aviooooon
 2. **Setup the project:**
 ```bash
 npm i
-pip install -r ./api/requirements.txt
+pip install -r ./api/requirements
 ```
 
 3. **Run the webside:**
 ```bash
+cd ./api/
 uvicorn main:app --reload
 ```
 

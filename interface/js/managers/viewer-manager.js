@@ -38,6 +38,10 @@ export class ViewerManager {
     _setupScene() {
         this.viewer.scene.globe.enableLighting = true;
         this.viewer.scene.screenSpaceCameraController.enableCollisionDetection = false;
+        this.viewer.scene.farToNearRatio = 1000000;
+        this.viewer.scene.camera.frustum.far = 1e12;
+        this.viewer.scene.globe.depthTestAgainstTerrain = false;
+        this.viewer.scene.backgroundColor = Cesium.Color.BLACK;
     }
 
     getViewer() {

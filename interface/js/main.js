@@ -24,17 +24,13 @@ class Application {
             this.viewerManager = new ViewerManager("cesiumContainer");
             const viewer = await this.viewerManager.initialize();
 
-            // Initialize managers
             this.entityManager = new EntityManager(viewer);
             this.cameraManager = new CameraManager(viewer);
 
-            // Set initial camera position
             this.cameraManager.setViewpoint(this.observerLocation.longitude, this.observerLocation.latitude, 1000);
 
-            // Add moon
             await this.updateMoon();
 
-            // Start aircraft updates
             await this.updateAircraft();
             this.aircraftService.startPolling(() => this.updateAircraft(), 30000);
 
@@ -49,7 +45,7 @@ class Application {
         const aircraft = await this.aircraftService.fetchAircraftData(
             this.observerLocation.latitude,
             this.observerLocation.longitude,
-            100 // km radius
+            100
         );
 
         aircraft.forEach((plane) => {
@@ -58,13 +54,13 @@ class Application {
     }
 
     async updateMoon() {
-        const moonPosition = await this.moonService.getMoonPosition(
+        const moonPosition = await this.moonService.getMoonData(
             this.observerLocation.latitude,
             this.observerLocation.longitude,
             new Date()
         );
 
-        this.entityManager.addMoon(moonPosition);
+        this.entityManager.updateMoon(moonPosition);
     }
 
     cleanup() {
@@ -73,11 +69,9 @@ class Application {
     }
 }
 
-// Initialize application when DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
     const app = new Application();
     app.initialize().catch(console.error);
 
-    // Cleanup on page unload
     window.addEventListener("beforeunload", () => app.cleanup());
 });

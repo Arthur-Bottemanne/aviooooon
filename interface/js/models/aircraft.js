@@ -25,7 +25,7 @@ export class Aircraft {
             data.flight?.trim() || "N/A",
             data.lat,
             data.lon,
-            data.alt_baro * 0.3048, // Convert feet to meters
+            data.alt_baro * 0.3048,
             data.track || 0
         );
     }

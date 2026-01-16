@@ -12,28 +12,28 @@ export class CoordinateUtils {
      * @returns {Cesium.Cartesian3}
      */
     static azElToCartesian(observerLat, observerLon, observerAlt, azimuth, elevation, range) {
-        const observerPosition = Cesium.Cartesian3.fromDegrees(observerLon, observerLat, observerAlt);
+        const lat = Number(observerLat);
+        const lon = Number(observerLon);
+        const alt = Number(observerAlt);
+        const az = Number(azimuth);
+        const el = Number(elevation);
+        const r = Number(range);
 
-        // Convert to radians
-        const azRad = Cesium.Math.toRadians(azimuth);
-        const elRad = Cesium.Math.toRadians(elevation);
+        const observerPosition = Cesium.Cartesian3.fromDegrees(lon, lat, alt);
 
-        // Calculate offset in ENU (East-North-Up) coordinates
-        const east = range * Math.cos(elRad) * Math.sin(azRad);
-        const north = range * Math.cos(elRad) * Math.cos(azRad);
-        const up = range * Math.sin(elRad);
+        const azRad = Cesium.Math.toRadians(az);
+        const elRad = Cesium.Math.toRadians(el);
 
-        // Create transformation matrix from ENU to ECEF
+        const east = r * Math.cos(elRad) * Math.sin(azRad);
+        const north = r * Math.cos(elRad) * Math.cos(azRad);
+        const up = r * Math.sin(elRad);
+
         const transform = Cesium.Transforms.eastNorthUpToFixedFrame(observerPosition);
-
-        // Apply transformation
         const offset = new Cesium.Cartesian3(east, north, up);
+
         return Cesium.Matrix4.multiplyByPoint(transform, offset, new Cesium.Cartesian3());
     }
 
-    /**
-     * Calculate distance between two geographic points
-     */
     static haversineDistance(lat1, lon1, lat2, lon2) {
         const R = 6371e3; // Earth radius in meters
         const φ1 = Cesium.Math.toRadians(lat1);

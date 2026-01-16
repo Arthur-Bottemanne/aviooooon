@@ -2,12 +2,19 @@ from fastapi import FastAPI
 from typing import Optional
 from datetime import datetime
 from moon import  compute_moon_position
-
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     title="Moon & Aircraft Predictor",
     description="Prediction of aircraft passing in front of the moon ",
     version="1.0",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"], # Your Vite URL
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.get("/moon")
