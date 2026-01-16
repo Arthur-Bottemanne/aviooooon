@@ -12,10 +12,8 @@ app = FastAPI(
 
 @app.get("/moon")
 async def get_moon_position(latitude: float, longitude: float,date:Optional[str]=None):
-    # Date management: if provided,it is converted;otherwise,'now' is used
     if date:
         try:
-            #Convert the text into a datetime object
             search_date = datetime.fromisoformat(date)
         except ValueError:
             return {"error": "Invalid date format. Use YYYY-MM-DDTHH:MM:SS"}

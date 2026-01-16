@@ -1,4 +1,3 @@
-# test_moon.py
 import pytest
 from datetime import datetime
 from moon import compute_moon_position
