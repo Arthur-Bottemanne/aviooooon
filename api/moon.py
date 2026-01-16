@@ -3,19 +3,19 @@ from skyfield.almanac import phase_angle
 from math import cos,radians
 from datetime import datetime
 
-#Folder Path
+
 load_data = Loader('data')
 # Load ephemeris DE421 (model NASA)
 #This file contains the precise positions of the stars from 1900 to 2050.
-eph = load_data('de421.bsp')
-moon = eph['moon']
-earth = eph['earth']
-sun = eph["sun"]
+planetary_data = load_data('de421.bsp')
+moon = planetary_data['moon']
+earth = planetary_data['earth']
+sun = planetary_data["sun"]
 
 
-def compute_moon_position(lat: float, lon: float, date_utc: datetime):
-    ts = load_data.timescale()
-    t = ts.utc(
+def compute_moon_position(latitude: float, longitude: float, date_utc: datetime):
+    time_scale = load_data.timescale()
+    astronomical_time = time_scale.utc(
         date_utc.year,
         date_utc.month,
         date_utc.day,
@@ -25,27 +25,19 @@ def compute_moon_position(lat: float, lon: float, date_utc: datetime):
     )
 
     # Position of the observer on Earth
-    observer = earth + Topos(latitude_degrees=lat, longitude_degrees=lon)
+    observer = earth + Topos(latitude_degrees=latitude, longitude_degrees=longitude)
 
-    # Moon observation (Apparent position for Az/Alt)
-    astrometric = observer.at(t).observe(moon)
-    alt, az, distance = astrometric.apparent().altaz()
+    # Moon observation (Apparent position for Azimut/Altitude)
+    astrometric = observer.at(astronomical_time).observe(moon)
+    altitude, azimut, distance = astrometric.apparent().altaz()
 
     # Moon phase (illumination)
-    phi = phase_angle(eph, 'moon', t)
-    illumination = (1.0 + cos(radians(phi.degrees))) / 2.0
+    moon_phase_angle = phase_angle(planetary_data, 'moon', astronomical_time)
+    illumination = (1.0 + cos(radians(moon_phase_angle.degrees))) / 2.0
 
     return {
-        "azimuth": float(round(az.degrees, 2)),
-        "elevation": float(round(alt.degrees, 2)),
+        "azimuth": float(round(azimut.degrees, 2)),
+        "elevation": float(round(altitude.degrees, 2)),
         "phase": float(round(illumination, 3)),
     }
 
-
-# Test Scenario 1 : Standard Calculation
-print("Scenario 1: ")
-print(compute_moon_position(46.5, 6.5, datetime(2026, 1, 1, 20, 0, 0)))
-
-#Test Scenario 2 : Moon Below horizon
-print("Scenario 2: ")
-print(compute_moon_position(46.5, 6.5, datetime(2026, 1, 15, 22, 0, 0)))
