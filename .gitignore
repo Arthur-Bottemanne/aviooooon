@@ -1,0 +1,9 @@
+#Python cache
+__pycache__/
+
+#Astronomical data
+api/data/*.bsp
+
+
+#IDE
+.idea/
