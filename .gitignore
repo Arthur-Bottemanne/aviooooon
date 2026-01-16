@@ -1,2 +1,12 @@
 .env
 node_modules
+
+#Python cache
+__pycache__/
+
+#Astronomical data
+api/data/*.bsp
+
+
+#IDE
+.idea/

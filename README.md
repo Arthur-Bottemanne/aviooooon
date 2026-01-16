@@ -73,3 +73,9 @@ We use GitHub issues and pull requests to manage our tasks and code quality.
 1. **Issues:** Tasks to be done containing user stories and scenarios to validate the issue.
 2. **Branches:** Never work directly on `main` or `develop`. Create a feature branch from an issue.
 3. **Pull Requests:** Once a sub-issue is complete, open a PR and add a reviewer. It will then be reviewed and if it passes the standards, it will be merged to `develop`
+
+
+**Documentation API:**
+
+Use this link for the documentation of the API:
+http://127.0.0.1:8000/docs
