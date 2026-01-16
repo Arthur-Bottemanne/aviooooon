@@ -13,7 +13,12 @@ export class MoonService {
     const moonPosition = Cesium.Simon1994PlanetaryPositions.computeMoonPositionInEarthInertialFrame(julianDate);
     
     // Transform to Earth-fixed frame
-    const icrfToFixed = Cesium.Transforms.computeIcrfToFixedMatrix(julianDate);
+    let icrfToFixed = Cesium.Transforms.computeIcrfToFixedMatrix(julianDate);
+
+    if (!Cesium.defined(icrfToFixed)) {
+      icrfToFixed = Cesium.Transforms.computeTemeToPseudoFixedMatrix(julianDate);
+    }
+
     const moonPositionFixed = Cesium.Matrix3.multiplyByVector(
       icrfToFixed,
       moonPosition,

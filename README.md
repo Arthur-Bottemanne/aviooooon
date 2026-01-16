@@ -21,15 +21,24 @@ cd aviooooon
 ```
 
 
-2. **Setup the API:**
+2. **Setup the project:**
 ```bash
-cd api
-pip install -r ./requirements.txt
+npm i
+pip install -r ./api/requirements.txt
+```
+
+3. **Run the webside:**
+```bash
 uvicorn main:app --reload
 ```
 
-3. **Launch the Interface:**
-Simply open `interface/index.html` in your browser. Ensure the API is running to see live plane data.
+Run the following command in a different terminal:
+
+```bash
+npm run dev
+```
+
+You can then access the website on the following url: [http://localhost:5173/](http://localhost:5173/)
 
 ## 3. File Architecture
 

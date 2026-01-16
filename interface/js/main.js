@@ -22,21 +22,21 @@ class Application {
     async initialize() {
         try {
             this.viewerManager = new ViewerManager("cesiumContainer");
-            const viewer = this.viewerManager.initialize();
+            const viewer = await this.viewerManager.initialize();
 
             // Initialize managers
             this.entityManager = new EntityManager(viewer);
             this.cameraManager = new CameraManager(viewer);
 
             // Set initial camera position
-            this.cameraManager.setViewpoint(this.observerLocation.longitude, this.observerLocation.latitude, 5000);
+            this.cameraManager.setViewpoint(this.observerLocation.longitude, this.observerLocation.latitude, 1000);
 
             // Add moon
             await this.updateMoon();
 
             // Start aircraft updates
             await this.updateAircraft();
-            this.aircraftService.startPolling(() => this.updateAircraft(), 5000);
+            this.aircraftService.startPolling(() => this.updateAircraft(), 30000);
 
             console.log("Application initialized successfully");
         } catch (error) {
