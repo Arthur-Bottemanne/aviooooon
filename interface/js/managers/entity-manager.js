@@ -1,10 +1,12 @@
 import * as Cesium from "cesium";
+import { MoonService } from "../services/moon-service.js";
 
 export class EntityManager {
     constructor(viewer) {
         this.viewer = viewer;
         this.entities = new Map();
-        this.moonId = "lunar-entity";
+        this.moonModel = "interface/assets/models/moon.glb";
+        this.moonService = new MoonService();
     }
 
     addAircraft(aircraft) {
@@ -49,45 +51,34 @@ export class EntityManager {
         }
     }
 
+    async addMoon() {
+        const moonData = await this.moonService.getMoonData();
+        console.log("moon data", moonData);
+        const position = Cesium.Cartesian3.fromDegrees(-123.0744619, 44.0503706, 50000000);
+        const heading = Cesium.Math.toRadians(135);
+        const pitch = 0;
+        const roll = 0;
+        const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+        const orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
+
+        this.moonEntity = this.viewer.entities.add({
+            name: "moon",
+            position: position,
+            orientation: orientation,
+            model: {
+                uri: "",
+                minimumPixelSize: 128,
+                maximumScale: 20000,
+            },
+        });
+        this.viewer.trackedEntity = this.moonEntity;
+    }
+
     /**
      * Adds or updates the moon using procedural graphics (no images)
      * @param {Object} moonData - { cartesian, azimuth, elevation, phase }
      */
-    updateMoon(moonData) {
-        const phaseName = this._getPhaseName(moonData.phase);
-        const entity = this.entities.get(this.moonId);
-
-        if (entity) {
-            // Update existing entity
-            entity.position = moonData.cartesian;
-            entity.label.text = `Moon (${phaseName})\nAz: ${moonData.azimuth.toFixed(1)}°`;
-        } else {
-            // Create new procedural moon entity
-            const newMoon = this.viewer.entities.add({
-                id: this.moonId,
-                position: moonData.cartesian,
-                point: {
-                    pixelSize: 50,
-                    color: Cesium.Color.fromCssColorString("#fffbe6"),
-                    outlineColor: Cesium.Color.WHITE,
-                    outlineWidth: 2,
-                    disableDepthTestDistance: Number.POSITIVE_INFINITY,
-                },
-                label: {
-                    text: `MOON`,
-                    font: "bold 18px sans-serif",
-                    fillColor: Cesium.Color.GOLD,
-                    outlineColor: Cesium.Color.BLACK,
-                    outlineWidth: 4,
-                    style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-                    distanceDisplayCondition: undefined,
-                    disableDepthTestDistance: Number.POSITIVE_INFINITY,
-                    pixelOffset: new Cesium.Cartesian2(0, -30),
-                },
-            });
-            this.entities.set(this.moonId, newMoon);
-        }
-    }
+    updateMoon(moonData) {}
 
     /**
      * Converts a 0.0-1.0 phase value to a human-readable string

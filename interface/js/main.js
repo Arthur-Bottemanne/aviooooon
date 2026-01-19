@@ -2,7 +2,6 @@ import { ViewerManager } from "./managers/viewer-manager.js";
 import { EntityManager } from "./managers/entity-manager.js";
 import { CameraManager } from "./managers/camera-manager.js";
 import { AircraftService } from "./services/aircraft-service.js";
-import { MoonService } from "./services/moon-service.js";
 
 class Application {
     constructor() {
@@ -10,7 +9,6 @@ class Application {
         this.entityManager = null;
         this.cameraManager = null;
         this.aircraftService = new AircraftService();
-        this.moonService = new MoonService();
 
         this.observerLocation = {
             latitude: 46.5197,
@@ -27,9 +25,9 @@ class Application {
             this.entityManager = new EntityManager(viewer);
             this.cameraManager = new CameraManager(viewer);
 
-            this.cameraManager.setViewpoint(this.observerLocation.longitude, this.observerLocation.latitude, 1000);
+            //this.cameraManager.setViewpoint(this.observerLocation.longitude, this.observerLocation.latitude, 1000);
 
-            await this.updateMoon();
+            this.entityManager.addMoon();
 
             await this.updateAircraft();
             this.aircraftService.startPolling(() => this.updateAircraft(), 30000);
@@ -51,16 +49,6 @@ class Application {
         aircraft.forEach((plane) => {
             this.entityManager.updateAircraft(plane);
         });
-    }
-
-    async updateMoon() {
-        const moonPosition = await this.moonService.getMoonData(
-            this.observerLocation.latitude,
-            this.observerLocation.longitude,
-            new Date()
-        );
-
-        this.entityManager.updateMoon(moonPosition);
     }
 
     cleanup() {
