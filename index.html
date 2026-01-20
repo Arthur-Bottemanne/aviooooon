@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>User Input Interface #5</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="container">
+    <h1>Calculateur de Coordonnées Astronomiques</h1>
+    
+    <form id="astronomy-form">
+        
+        <div class="field"> 
+            <label for="lat">Latitude :</label>
+            <input type="number" id="lat" step="any" placeholder="Ex: 48.85" required>
+        </div>
+
+        <div class="field">
+            <label for="lon">Longitude :</label>
+            <input type="number" id="lon" step="any" placeholder="Ex: 2.35" required>
+        </div>
+
+        <div class="field">
+            <label for="alt">Altitude (m) :</label>
+            <input type="number" id="alt" placeholder="Ex: 100" required>
+        </div>
+
+        <div class="field">
+            <label for="date">Date et Heure :</label>
+            <input type="datetime-local" id="date" required>
+        </div>
+        
+        <button type="submit">Calculer</button>
+
+    </form>
+    
+    <p id="message-erreur" style="color: red;"></p>
+    <p id="message-succes" style="color: green;"></p>
+    </div>
+<script src="index.js"></script>
+</body>
+</html>
