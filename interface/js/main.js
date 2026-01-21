@@ -1,3 +1,4 @@
+import * as Cesium from "cesium";
 import { ViewerManager } from "./managers/viewer-manager.js";
 import { EntityManager } from "./managers/entity-manager.js";
 import { CameraManager } from "./managers/camera-manager.js";
@@ -22,10 +23,23 @@ class Application {
             this.viewerManager = new ViewerManager("cesiumContainer");
             const viewer = await this.viewerManager.initialize();
 
+            viewer.scene.fog.enabled = false;
+
             this.entityManager = new EntityManager(viewer);
             this.cameraManager = new CameraManager(viewer);
 
-            //this.cameraManager.setViewpoint(this.observerLocation.longitude, this.observerLocation.latitude, 1000);
+            const cameraOrientation = {
+                heading: Cesium.Math.toRadians(0),
+                pitch: Cesium.Math.toRadians(0),
+                roll: 0.0,
+            };
+
+            this.cameraManager.setViewpoint(
+                this.observerLocation.longitude,
+                this.observerLocation.latitude,
+                1000,
+                cameraOrientation
+            );
 
             this.entityManager.addMoon();
 

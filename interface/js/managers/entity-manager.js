@@ -52,37 +52,28 @@ export class EntityManager {
     }
 
     async addMoon() {
-        const moonData = await this.moonService.getMoonData();
+        const moonData = await this.moonService.getMoonData(45, 8, 1000);
         console.log("moon data", moonData);
         const position = Cesium.Cartesian3.fromDegrees(-123.0744619, 44.0503706, 50000000);
         const heading = Cesium.Math.toRadians(135);
         const pitch = 0;
         const roll = 0;
         const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
-        const orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
+        const modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(position, hpr);
 
-        this.moonEntity = this.viewer.entities.add({
-            name: "moon",
-            position: position,
-            orientation: orientation,
-            model: {
-                uri: "",
-                minimumPixelSize: 128,
-                maximumScale: 20000,
-            },
+        const moonModel = await Cesium.Model.fromGltfAsync({
+            url: this.moonModel,
+            modelMatrix: modelMatrix,
+            minimumPixelSize: 2048,
+            maximumScale: 3000,
+            customShader: new Cesium.CustomShader({
+                lightingModel: Cesium.LightingModel.UNLIT,
+            }),
         });
-        this.viewer.trackedEntity = this.moonEntity;
+
+        this.viewer.scene.primitives.add(moonModel);
     }
 
-    /**
-     * Adds or updates the moon using procedural graphics (no images)
-     * @param {Object} moonData - { cartesian, azimuth, elevation, phase }
-     */
-    updateMoon(moonData) {}
-
-    /**
-     * Converts a 0.0-1.0 phase value to a human-readable string
-     */
     _getPhaseName(phase) {
         if (phase <= 0.05 || phase >= 0.95) return "New Moon";
         if (phase > 0.05 && phase < 0.2) return "Waxing Crescent";

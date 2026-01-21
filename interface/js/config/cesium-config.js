@@ -17,10 +17,6 @@ export const CESIUM_CONFIG = {
         requestWaterMask: true,
         requestVertexNormals: true,
     },
-    camera: {
-        defaultAltitude: 5000,
-        defaultPitch: -45,
-    },
 };
 
 export const API_ENDPOINTS = {
