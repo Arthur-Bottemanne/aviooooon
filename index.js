@@ -1,30 +1,35 @@
 const myForm = document.getElementById('astronomy-form');
-const msgError = document.getElementById('message-erreur');
-const msgSucces = document.getElementById('message-succes');
+const msgError = document.getElementById('message-error');
+const msgSuccess = document.getElementById('message-success');
 
 myForm.addEventListener('submit', (event) => {
     event.preventDefault();
 
-    const lat = parseFloat(document.getElementById('lat').value);
-    const lon = parseFloat(document.getElementById('lon').value);
-    const alt = parseFloat(document.getElementById('alt').value);
-    const date = document.getElementById('date').value;
+    const latValue = parseFloat(document.getElementById('lat').value);
+    const lonValue = parseFloat(document.getElementById('lon').value);
+    const altValue = parseFloat(document.getElementById('alt').value);
+    const dateValue = document.getElementById('date').value;
 
     msgError.innerText = "";
-    msgSucces.innerText = "";
+    msgSuccess.innerText = "";
 
 
-    if (lat < -90 || lat > 90) {
+    if (latValue < -90 || latValue > 90) {
         msgError.innerText = "Erreur : La latitude doit être entre -90 et 90.";
         return;
     }
 
-    if (lon < -180 || lon > 180) {
+    if (lonValue < -180 || lonValue > 180) {
         msgError.innerText = "Erreur : La longitude doit être entre -180 et 180.";
         return;
     }
 
+    const lat = latValue;
+    const lon = lonValue;
+    const alt = altValue;
+    const date = dateValue;
+
 
     console.log("Données enregistrées :", { lat, lon, alt, date });
-    msgSucces.innerText = "Succès ! Les coordonnées sont valides.";
+    msgSuccess.innerText = "Succès ! Les coordonnées sont valides.";
 });
