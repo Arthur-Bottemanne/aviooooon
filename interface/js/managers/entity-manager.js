@@ -52,8 +52,8 @@ export class EntityManager {
     }
 
     async addMoon() {
-        const moonData = await this.moonService.getMoonData(45, 8, 1000);
-        const position = Cesium.Cartesian3.fromDegrees(-123.0744619, 44.0503706, 50000000);
+        const moonData = await this.moonService.getMoonData(46.5197, 6.6323, 495);
+        const position = new Cesium.Cartesian3(moonData.cartesian.x, moonData.cartesian.y, moonData.cartesian.z);
 
         const moonEntity = this.viewer.entities.add({
             name: "The Moon",
