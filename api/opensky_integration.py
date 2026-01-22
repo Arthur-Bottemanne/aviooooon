@@ -22,6 +22,3 @@ def fetch_aircrafts(latitude, longitude,radius_km):
     return []
 
 
-#Test
-planes = fetch_aircrafts(46.5,6.5,100)
-print(f"Nombre d'avions trouvés : {len(planes)}")
