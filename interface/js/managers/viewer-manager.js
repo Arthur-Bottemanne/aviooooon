@@ -36,12 +36,14 @@ export class ViewerManager {
     }
 
     _setupScene() {
-        this.viewer.scene.globe.enableLighting = true;
-        this.viewer.scene.screenSpaceCameraController.enableCollisionDetection = false;
-        this.viewer.scene.farToNearRatio = 1000000;
-        this.viewer.scene.camera.frustum.far = 1e12;
-        this.viewer.scene.globe.depthTestAgainstTerrain = false;
-        this.viewer.scene.backgroundColor = Cesium.Color.BLACK;
+        const scene = this.viewer.scene;
+        scene.globe.enableLighting = true;
+        scene.screenSpaceCameraController.enableCollisionDetection = false;
+        scene.farToNearRatio = 1000000;
+        scene.camera.frustum.far = 1e12;
+        scene.globe.depthTestAgainstTerrain = false;
+        scene.backgroundColor = Cesium.Color.BLACK;
+        scene.moon = scene.moon && scene.moon.destroy();
     }
 
     getViewer() {

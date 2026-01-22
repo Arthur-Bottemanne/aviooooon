@@ -90,7 +90,7 @@ export class EntityManager {
             url: this.moonModel,
             modelMatrix: modelMatrix,
             minimumPixelSize: 2048,
-            maximumScale: 3000,
+            maximumScale: 8000,
             customShader: new Cesium.CustomShader({
                 lightingModel: Cesium.LightingModel.UNLIT,
             }),
