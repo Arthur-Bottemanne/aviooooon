@@ -53,8 +53,33 @@ export class EntityManager {
 
     async addMoon() {
         const moonData = await this.moonService.getMoonData(45, 8, 1000);
-        console.log("moon data", moonData);
         const position = Cesium.Cartesian3.fromDegrees(-123.0744619, 44.0503706, 50000000);
+
+        const moonEntity = this.viewer.entities.add({
+            name: "The Moon",
+            position: position,
+            description: `
+                <table class="cesium-infoBox-defaultTable">
+                    <tbody>
+                        <tr><th>Parameter</th><th>Value</th></tr>
+                        <tr><td>Data A</td><td>${moonData.someValue || "N/A"}</td></tr>
+                    </tbody>
+                </table>
+            `,
+            label: {
+                text: "● Moon",
+                font: "14px monospace",
+                style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                fillColor: Cesium.Color.YELLOW,
+                outlineColor: Cesium.Color.BLACK,
+                outlineWidth: 2,
+                horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
+                pixelOffset: new Cesium.Cartesian2(-3, 0),
+                disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                eyeOffset: new Cesium.Cartesian3(0.0, 0.0, 100000000000.0),
+            },
+        });
+
         const heading = Cesium.Math.toRadians(135);
         const pitch = 0;
         const roll = 0;
@@ -69,6 +94,7 @@ export class EntityManager {
             customShader: new Cesium.CustomShader({
                 lightingModel: Cesium.LightingModel.UNLIT,
             }),
+            id: moonEntity,
         });
 
         this.viewer.scene.primitives.add(moonModel);
