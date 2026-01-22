@@ -1,7 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from typing import Optional
 from datetime import datetime
 from moon import  compute_moon_position
+from opensky_integration import fetch_aircrafts
 
 
 app = FastAPI(
@@ -29,4 +30,19 @@ async def get_moon_position(latitude: float, longitude: float,date:Optional[str]
     }
 
 
+@app.get("/aircrafts")
+async def get_aircrafts(latitude: float, longitude: float,radius: int = 100):
+    try:
+        planes = fetch_aircrafts(latitude, longitude, radius)
 
+        return {
+            "status": "success",
+            "latitude": latitude,
+            "longitude": longitude,
+            "radius_km": radius,
+            "count": len(planes),
+            "data": planes
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
