@@ -31,15 +31,16 @@ async def get_moon_position(latitude: float, longitude: float,date:Optional[str]
 
 
 @app.get("/aircrafts")
-async def get_aircrafts(latitude: float, longitude: float,radius: int = 100):
+async def get_aircrafts(latitude: float, longitude: float,radius: int = 100,time:Optional[int]=None):
     try:
-        planes = fetch_aircrafts(latitude, longitude, radius)
+        planes = fetch_aircrafts(latitude, longitude, radius,time_stamp=time)
 
         return {
             "status": "success",
             "latitude": latitude,
             "longitude": longitude,
             "radius_km": radius,
+            "requested_time": time,
             "count": len(planes),
             "data": planes
         }
