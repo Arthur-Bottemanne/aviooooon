@@ -2,12 +2,19 @@ import requests
 from bounding_box import get_bounding_box
 
 
-def fetch_aircrafts(latitude, longitude,radius_km):
+def fetch_aircrafts(latitude, longitude,radius_km,time_stamp=None):
     bounds = get_bounding_box(latitude, longitude, radius_km)
     url = "https://opensky-network.org/api/states/all"
-
+    parameters = {
+        "lamin": bounds["lamin"],
+        "lomin": bounds["lomin"],
+        "lamax": bounds["lamax"],
+        "lomax": bounds["lomax"]
+    }
+    if time_stamp:
+        parameters["time"] = time_stamp
     try:
-        response = requests.get(url,params=bounds,timeout=10)
+        response = requests.get(url,params=parameters,timeout=10)
 
         #Check whether the API returns an error
         response.raise_for_status()
