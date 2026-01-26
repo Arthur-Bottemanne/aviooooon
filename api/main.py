@@ -1,17 +1,17 @@
 from fastapi import FastAPI, HTTPException
 from typing import Optional
 from datetime import datetime
-from moon import  compute_moon_position
-from opensky_integration import fetch_aircrafts
+from api.services.moon import  compute_moon_position
+from api.services.opensky_integration import fetch_aircrafts
 
 
 app = FastAPI(
     title="Moon & Aircraft Predictor",
-    description="Prediction of aircraft passing in front of the moon ",
+    description="Prediction of aircraft passing in front of the services ",
     version="1.0",
 )
 
-@app.get("/moon")
+@app.get("/services")
 async def get_moon_position(latitude: float, longitude: float,date:Optional[str]=None):
     if date:
         try:
@@ -30,7 +30,7 @@ async def get_moon_position(latitude: float, longitude: float,date:Optional[str]
     }
 
 
-@app.get("/aircrafts")
+@app.get("/core")
 async def get_aircrafts(latitude: float, longitude: float,radius: int = 100,time:Optional[int]=None):
     try:
         planes = fetch_aircrafts(latitude, longitude, radius,time_stamp=time)

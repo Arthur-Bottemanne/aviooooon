@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from opensky_integration import get_bounding_box,fetch_aircrafts
+from api.services.opensky_integration import get_bounding_box,fetch_aircrafts
 
 
 class TestOpenSky(unittest.TestCase):

@@ -1,5 +1,5 @@
 import requests
-from bounding_box import get_bounding_box
+from api.core.bounding_box import get_bounding_box
 
 
 def fetch_aircrafts(latitude, longitude,radius_km,time_stamp=None):
