@@ -6,6 +6,13 @@ export class AircraftService {
         this.updateInterval = null;
     }
 
+    /**
+     * Fetches aircraft within a specified radial distance from a center point.
+     * @param {number} latitude - Center latitude in decimal degrees.
+     * @param {number} longitude - Center longitude in decimal degrees.
+     * @param {number} radius - The search radius in km.
+     * @returns {Promise<Aircraft[]>} A promise resolving to an array of mapped Aircraft instances. 
+     */
     async fetchAircraftData(latitude, longitude, radius) {
         try {
             const response = await fetch(`${API_ENDPOINTS.aircraft}?lat=${latitude}&lon=${longitude}&radius=${radius}`);
@@ -22,11 +29,22 @@ export class AircraftService {
         }
     }
 
-    startPolling(callback, intervalMs = 5000) {
+    /**
+     * Initiates a periodic polling sequence to update aircraft data.
+     * Automatically clears any existing polling interval before starting a new one.
+     * @param {Function} callback - The function to be executed at every interval.
+     * @param {number} [intervalMs=60000] - The polling frequency in milliseconds (defaults to 1 minute).
+     * @returns {void}
+     */
+    startPolling(callback, intervalMs = 60000) {
         this.stopPolling();
         this.updateInterval = setInterval(callback, intervalMs);
     }
 
+    /**
+     * Stops the active polling sequence and clears the interval timer.
+     * @returns {void}
+     */
     stopPolling() {
         if (this.updateInterval) {
             clearInterval(this.updateInterval);

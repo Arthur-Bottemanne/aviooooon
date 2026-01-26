@@ -31,7 +31,7 @@ export class Aircraft {
     }
 
     static fromAzimuthElevation(observerLat, observerLon, observerAlt, azimuth, elevation, range) {
-        const position = CoordinateUtils.azElToCartesian(
+        const position = CoordinateUtils.azimuthElevationToCartesian(
             observerLat,
             observerLon,
             observerAlt,

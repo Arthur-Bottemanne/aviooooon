@@ -1,5 +1,3 @@
-import { API_ENDPOINTS } from "../config/cesium-config.js";
-
 export class ApiService {
     constructor() {
         this.baseUrl = import.meta.env.VITE_BASE_API_URL;
@@ -8,6 +6,14 @@ export class ApiService {
         };
     }
 
+    /**
+     * Performs an asynchronous GET request with query parameters.
+     * @param {string} endpoint - The API endpoint relative to the base URL.
+     * @param {Object} [params={}] - Key-value pairs to be appended as query strings.
+     * @param {Object} [headers={}] - Additional custom headers for this specific request.
+     * @returns {Promise<any>} The parsed JSON or text data from the response.
+     * @throws {Error} Throws a normalized error if the fetch fails or the response is not "ok".
+     */
     async get(endpoint, params = {}, headers = {}) {
         const url = new URL(endpoint, this.baseUrl);
 
@@ -29,20 +35,12 @@ export class ApiService {
         }
     }
 
-    async post(endpoint, data = {}, headers = {}) {
-        try {
-            const response = await fetch(`${this.baseUrl}${endpoint}`, {
-                method: "POST",
-                headers: { ...this.defaultHeaders, ...headers },
-                body: JSON.stringify(data),
-            });
-
-            return await this.handleResponse(response);
-        } catch (error) {
-            throw this.handleError(error);
-        }
-    }
-
+    /**
+     * Validates the HTTP response and determines the appropriate parsing method.
+     * @param {Response} response - The Fetch API Response object.
+     * @returns {Promise<any>} Parsed JSON if the content type matches, otherwise plain text.
+     * @throws {Error} Throws an error containing status code and response body if request failed.
+     */
     async handleResponse(response) {
         if (!response.ok) {
             const errorBody = await response.text();
@@ -57,6 +55,11 @@ export class ApiService {
         return await response.text();
     }
 
+    /**
+     * Normalizes error messages for common failure scenarios (e.g., offline or aborted).
+     * @param {Error|any} error - The error caught during the fetch lifecycle.
+     * @returns {Error} A standardized Error object.
+     */
     handleError(error) {
         if (error.name === "AbortError") {
             return new Error("Request was aborted");
@@ -67,48 +70,5 @@ export class ApiService {
         }
 
         return error;
-    }
-
-    async getWithTimeout(endpoint, params = {}, timeoutMs = 10000) {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
-        try {
-            const url = new URL(endpoint, this.baseUrl);
-            Object.keys(params).forEach((key) => {
-                url.searchParams.append(key, params[key]);
-            });
-
-            const response = await fetch(url.toString(), {
-                signal: controller.signal,
-                headers: this.defaultHeaders,
-            });
-
-            return await this.handleResponse(response);
-        } catch (error) {
-            throw this.handleError(error);
-        } finally {
-            clearTimeout(timeoutId);
-        }
-    }
-
-    async batchGet(endpoints) {
-        try {
-            const promises = endpoints.map((endpoint) => this.get(endpoint));
-            return await Promise.all(promises);
-        } catch (error) {
-            console.error("Batch request failed:", error);
-            throw error;
-        }
-    }
-}
-
-export class AircraftApiService extends ApiService {
-    constructor() {
-        super(API_ENDPOINTS.aircraft);
-    }
-
-    async getNearbyAircraft(lat, lon, radius = 100) {
-        return this.get("", { lat, lon, radius });
     }
 }

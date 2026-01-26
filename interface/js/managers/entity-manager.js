@@ -1,120 +1,57 @@
-import * as Cesium from "cesium";
-import { MoonService } from "../services/moon-service.js";
-
 export class EntityManager {
     constructor(viewer) {
         this.viewer = viewer;
         this.entities = new Map();
-        this.moonModel = "/interface/assets/models/moon.glb";
-        this.moonService = new MoonService();
     }
 
-    addAircraft(aircraft) {
-        const entity = this.viewer.entities.add({
-            id: aircraft.id,
-            position: aircraft.position,
-            billboard: {
-                image: aircraft.icon,
-                scale: 0.5,
-                verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-            },
-            label: {
-                text: aircraft.callsign,
-                font: "14px sans-serif",
-                pixelOffset: new Cesium.Cartesian2(0, -30),
-                fillColor: Cesium.Color.WHITE,
-                outlineColor: Cesium.Color.BLACK,
-                outlineWidth: 2,
-                style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-            },
-        });
+    /**
+     * Registers a new high-level Entity with the viewer and tracks it internally.
+     * 
+     * If an entity with the given ID already exists, the existing instance is returned.
+     * @param {string} id - A unique identifier for the entity.
+     * @param {Object} options - Cesium Entity options (position, model, label, etc.).
+     * @returns {Cesium.Entity} The newly created or existing Cesium Entity.
+     */
+    add(id, options) {
+        if (this.entities.has(id)) return this.entities.get(id);
 
-        this.entities.set(aircraft.id, entity);
+        const entity = this.viewer.entities.add({ id, ...options });
+        this.entities.set(id, entity);
         return entity;
     }
 
-    updateAircraft(aircraft) {
-        const entity = this.entities.get(aircraft.id);
+    /**
+     * Updates an existing entity's properties using shallow merging.
+     * @param {string} id - The unique identifier of the entity to update.
+     * @param {Object} updates - An object containing the properties to be updated.
+     * @returns {void}
+     */
+    update(id, updates) {
+        const entity = this.entities.get(id);
         if (entity) {
-            entity.position = aircraft.position;
-            entity.label.text = aircraft.callsign;
-        } else {
-            this.addAircraft(aircraft);
+            Object.assign(entity, updates);
         }
     }
 
-    removeAircraft(aircraftId) {
-        const entity = this.entities.get(aircraftId);
+    /**
+     * Removes an entity from the Cesium viewer and the internal tracking Map.
+     * @param {string} id - The unique identifier of the entity to remove.
+     * @returns {void}
+     */
+    remove(id) {
+        const entity = this.entities.get(id);
         if (entity) {
             this.viewer.entities.remove(entity);
-            this.entities.delete(aircraftId);
+            this.entities.delete(id);
         }
     }
 
-    async addMoon() {
-        const moonData = await this.moonService.getMoonData(46.5197, 6.6323, 495);
-        const position = new Cesium.Cartesian3(moonData.cartesian.x, moonData.cartesian.y, moonData.cartesian.z);
-
-        const moonEntity = this.viewer.entities.add({
-            name: "The Moon",
-            position: position,
-            description: `
-                <table class="cesium-infoBox-defaultTable">
-                    <tbody>
-                        <tr><th>Parameter</th><th>Value</th></tr>
-                        <tr><td>Moon phase</td><td>${this._getPhaseName(moonData.phase) || "N/A"}</td></tr>
-                    </tbody>
-                </table>
-            `,
-            label: {
-                text: "● Moon",
-                font: "14px monospace",
-                style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-                fillColor: Cesium.Color.YELLOW,
-                outlineColor: Cesium.Color.BLACK,
-                outlineWidth: 2,
-                horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
-                pixelOffset: new Cesium.Cartesian2(-3, 0),
-                disableDepthTestDistance: Number.POSITIVE_INFINITY,
-                eyeOffset: new Cesium.Cartesian3(0.0, 0.0, 100000000000.0),
-            },
-        });
-
-        const heading = Cesium.Math.toRadians(135);
-        const pitch = 0;
-        const roll = 0;
-        const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
-        const modelMatrix = Cesium.Transforms.headingPitchRollToFixedFrame(position, hpr);
-
-        const moonModel = await Cesium.Model.fromGltfAsync({
-            url: this.moonModel,
-            modelMatrix: modelMatrix,
-            minimumPixelSize: 2048,
-            maximumScale: 8000,
-            customShader: new Cesium.CustomShader({
-                lightingModel: Cesium.LightingModel.UNLIT,
-            }),
-            id: moonEntity,
-        });
-
-        this.viewer.scene.primitives.add(moonModel);
-
-        return position;
-    }
-
-    _getPhaseName(phase) {
-        if (phase <= 0.02 || phase >= 0.98) return "New Moon";
-        if (phase < 0.23) return "Waxing Crescent";
-        if (phase <= 0.27) return "First Quarter";
-        if (phase < 0.48) return "Waxing Gibbous";
-        if (phase <= 0.52) return "Full Moon";
-        if (phase < 0.73) return "Waning Gibbous";
-        if (phase <= 0.77) return "Last Quarter";
-        return "Waning Crescent";
-    }
-
-    clear() {
-        this.viewer.entities.removeAll();
-        this.entities.clear();
+    /**
+     * Adds a low-level Graphic Primitive to the scene. 
+     * @param {Cesium.Primitive|Cesium.Model} primitive - The Cesium primitive or model instance to add.
+     * @returns {Object} The added primitive.
+     */
+    addPrimitive(primitive) {
+        return this.viewer.scene.primitives.add(primitive);
     }
 }
