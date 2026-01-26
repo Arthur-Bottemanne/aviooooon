@@ -5,7 +5,7 @@ export class EntityManager {
     constructor(viewer) {
         this.viewer = viewer;
         this.entities = new Map();
-        this.moonModel = "interface/assets/models/moon.glb";
+        this.moonModel = "/interface/assets/models/moon.glb";
         this.moonService = new MoonService();
     }
 
@@ -62,7 +62,7 @@ export class EntityManager {
                 <table class="cesium-infoBox-defaultTable">
                     <tbody>
                         <tr><th>Parameter</th><th>Value</th></tr>
-                        <tr><td>Data A</td><td>${moonData.someValue || "N/A"}</td></tr>
+                        <tr><td>Moon phase</td><td>${this._getPhaseName(moonData.phase) || "N/A"}</td></tr>
                     </tbody>
                 </table>
             `,
@@ -98,6 +98,8 @@ export class EntityManager {
         });
 
         this.viewer.scene.primitives.add(moonModel);
+
+        return position;
     }
 
     _getPhaseName(phase) {
