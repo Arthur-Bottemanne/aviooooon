@@ -49,9 +49,9 @@ class Application {
                 cameraOrientation
             );
 
-            const moonPosition = this.entityManager.addMoon();
+            const moonPosition = await this.entityManager.addMoon();
 
-            this.cameraManager.lookAt(moonPosition);
+            this.cameraManager.lookAtTarget(moonPosition);
 
             await this.updateAircraft();
             this.aircraftService.startPolling(() => this.updateAircraft(), 30000);

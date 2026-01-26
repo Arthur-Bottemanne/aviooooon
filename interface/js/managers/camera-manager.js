@@ -51,10 +51,21 @@ export class CameraManager {
         });
     }
 
-    lookAt(targetPosition, offset) {
-        this.viewer.camera.lookAt(
-            targetPosition,
-            new Cesium.HeadingPitchRange(offset.heading, offset.pitch, offset.range)
+    lookAtTarget(targetPosition) {
+        const camera = this.viewer.camera;
+        
+        const direction = Cesium.Cartesian3.subtract(
+            targetPosition, 
+            camera.position, 
+            new Cesium.Cartesian3()
         );
+        Cesium.Cartesian3.normalize(direction, direction);
+
+        camera.setView({
+            orientation: {
+                direction: direction,
+                up: Cesium.Cartesian3.normalize(camera.position, new Cesium.Cartesian3())
+            }
+        });
     }
 }
