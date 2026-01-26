@@ -103,13 +103,13 @@ export class EntityManager {
     }
 
     _getPhaseName(phase) {
-        if (phase <= 0.05 || phase >= 0.95) return "New Moon";
-        if (phase > 0.05 && phase < 0.2) return "Waxing Crescent";
-        if (phase >= 0.2 && phase <= 0.3) return "First Quarter";
-        if (phase > 0.3 && phase < 0.45) return "Waxing Gibbous";
-        if (phase >= 0.45 && phase <= 0.55) return "Full Moon";
-        if (phase > 0.55 && phase < 0.7) return "Waning Gibbous";
-        if (phase >= 0.7 && phase <= 0.8) return "Last Quarter";
+        if (phase <= 0.02 || phase >= 0.98) return "New Moon";
+        if (phase < 0.23) return "Waxing Crescent";
+        if (phase <= 0.27) return "First Quarter";
+        if (phase < 0.48) return "Waxing Gibbous";
+        if (phase <= 0.52) return "Full Moon";
+        if (phase < 0.73) return "Waning Gibbous";
+        if (phase <= 0.77) return "Last Quarter";
         return "Waning Crescent";
     }
 
