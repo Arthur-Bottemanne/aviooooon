@@ -34,7 +34,6 @@ async def get_moon_position(latitude: float, longitude: float,date:Optional[str]
 @app.get("/aircrafts")
 async def get_aircrafts(latitude: float, longitude: float,radius: int = 100,time:Optional[int]= Query(None,description="Timestamp in UNIX format (e.g., 1704067200)")):
     try:
-        1 / 0
         planes = fetch_aircrafts(latitude, longitude, radius,time_stamp=time)
 
         return {
