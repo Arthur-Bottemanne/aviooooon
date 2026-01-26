@@ -1,4 +1,5 @@
 import * as Cesium from "cesium";
+import { loadSavedPosition } from "./utils/local-storage.js";
 import { ViewerManager } from "./managers/viewer-manager.js";
 import { EntityManager } from "./managers/entity-manager.js";
 import { CameraManager } from "./managers/camera-manager.js";
@@ -11,10 +12,17 @@ class Application {
         this.cameraManager = null;
         this.aircraftService = new AircraftService();
 
+        const config = loadSavedPosition()
+
+        if (!config) {
+             console.log("Must have position defined!")
+             return
+        }
+
         this.observerLocation = {
-            latitude: 46.5197,
-            longitude: 6.6323,
-            altitude: 495,
+            latitude: config.latitude,
+            longitude: config.longitude,
+            altitude: config.altitude,
         };
     }
 
@@ -37,7 +45,7 @@ class Application {
             this.cameraManager.setViewpoint(
                 this.observerLocation.longitude,
                 this.observerLocation.latitude,
-                1000,
+                this.observerLocation.altitude,
                 cameraOrientation
             );
 
