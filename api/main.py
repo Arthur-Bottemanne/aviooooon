@@ -1,8 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
+from fastapi.responses import JSONResponse
 from typing import Optional
 from datetime import datetime
-from moon import  compute_moon_position
-from fastapi.middleware.cors import CORSMiddleware
+from services.moon import  compute_moon_position
+from services.opensky_integration import fetch_aircrafts
 
 app = FastAPI(
     title="Moon & Aircraft Predictor",
@@ -36,4 +37,20 @@ async def get_moon_position(latitude: float, longitude: float,date:Optional[str]
     }
 
 
+@app.get("/aircrafts")
+async def get_aircrafts(latitude: float, longitude: float,radius: int = 100,time:Optional[int]= Query(None,description="Timestamp in UNIX format (e.g., 1704067200)")):
+    try:
+        planes = fetch_aircrafts(latitude, longitude, radius,time_stamp=time)
 
+        return {
+            "status": "success",
+            "latitude": latitude,
+            "longitude": longitude,
+            "radius_km": radius,
+            "requested_time": time,
+            "count": len(planes),
+            "data": planes
+        }
+
+    except Exception as e:
+       return JSONResponse(status_code=500,content={"status": "failed","message": f"Internal Server Error: {str(e)}"})
