@@ -18,17 +18,7 @@ export class CameraManager {
         controller.zoomEventTypes = undefined;
 
         this.viewer.scene.postRender.addEventListener(() => {
-            const camera = this.viewer.camera;
-
-            if (Math.abs(camera.roll) > 0.0) {
-                camera.setView({
-                    orientation: {
-                        heading: camera.heading,
-                        pitch: camera.pitch,
-                        roll: 0.0,
-                    },
-                });
-            }
+            this._fixCamera()
         });
     }
 
@@ -67,5 +57,34 @@ export class CameraManager {
                 up: Cesium.Cartesian3.normalize(camera.position, new Cesium.Cartesian3())
             }
         });
+    }
+    
+    _fixCamera() {
+        const camera = this.viewer.camera;
+
+        const maxPitch = Cesium.Math.toRadians(80);
+        const minPitch = Cesium.Math.toRadians(-80);
+
+        if (camera.pitch > maxPitch || camera.pitch < minPitch) {
+            const clampedPitch = Cesium.Math.clamp(camera.pitch, minPitch, maxPitch);
+            
+            camera.setView({
+                orientation: {
+                    heading: camera.heading,
+                    pitch: clampedPitch,
+                    roll: 0.0, // Keeping your existing roll fix
+                },
+            });
+        }
+
+        if (Math.abs(camera.roll) > 0.0) {
+            camera.setView({
+                orientation: {
+                    heading: camera.heading,
+                    pitch: camera.pitch,
+                    roll: 0.0,
+                },
+            });
+        }
     }
 }
