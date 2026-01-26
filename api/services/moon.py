@@ -8,7 +8,7 @@ load_data = Loader('data')
 # Load ephemeris DE421 (model NASA)
 #This file contains the precise positions of the stars from 1900 to 2050.
 planetary_data = load_data('de421.bsp')
-moon = planetary_data['services']
+moon = planetary_data['moon']
 earth = planetary_data['earth']
 sun = planetary_data["sun"]
 
@@ -32,7 +32,7 @@ def compute_moon_position(latitude: float, longitude: float, date_utc: datetime)
     altitude, azimut, distance = astrometric.apparent().altaz()
 
     # Moon phase (illumination)
-    moon_phase_angle = phase_angle(planetary_data, 'services', astronomical_time)
+    moon_phase_angle = phase_angle(planetary_data, 'moon', astronomical_time)
     illumination = (1.0 + cos(radians(moon_phase_angle.degrees))) / 2.0
 
     return {
