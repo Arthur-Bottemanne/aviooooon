@@ -9,13 +9,13 @@ export class CameraManager {
 
     configuration() {
         const controller = this.viewer.scene.screenSpaceCameraController;
-        // controller.enableZoom = false;
-        // controller.enableTranslate = false;
-        // controller.enableTilt = false;
-        // controller.enableLook = true;
-        // controller.lookEventTypes = [Cesium.CameraEventType.LEFT_DRAG];
-        // controller.rotateEventTypes = undefined;
-        // controller.zoomEventTypes = undefined;
+        controller.enableZoom = false;
+        controller.enableTranslate = false;
+        controller.enableTilt = false;
+        controller.enableLook = true;
+        controller.lookEventTypes = [Cesium.CameraEventType.LEFT_DRAG];
+        controller.rotateEventTypes = undefined;
+        controller.zoomEventTypes = undefined;
 
         this.viewer.scene.postRender.addEventListener(() => {
             const camera = this.viewer.camera;

@@ -3,6 +3,7 @@ node_modules
 
 #Python cache
 __pycache__/
+.venv
 
 #Astronomical data
 api/data/*.bsp
