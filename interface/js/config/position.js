@@ -26,11 +26,6 @@ astronomyForm.addEventListener('submit', (event) => {
         return;
     }
 
-    const latitude = latitudeValue;
-    const longitude = longitudeValue;
-    const altitude = altitudeValue;
-    const date = dateValue;
-
     const positionConfig = {
         latitude: latitudeValue,
         longitude: longitudeValue,
@@ -40,9 +35,6 @@ astronomyForm.addEventListener('submit', (event) => {
     };
 
     localStorage.setItem('positionConfig', JSON.stringify(positionConfig));
-
-    console.log("Données enregistrées :", { latitude, longitude, altitude, date });
-    successMessageDisplay.innerText = "Succès ! Les coordonnées sont valides.";
 
     window.location.href = "/interface/view.html";
 });
