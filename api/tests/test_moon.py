@@ -1,5 +1,5 @@
 from datetime import datetime
-from api.services.moon import compute_moon_position
+from services.moon import compute_moon_position
 
 
 

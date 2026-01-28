@@ -18,13 +18,15 @@ class TestOpenSky(unittest.TestCase):
     def test_fetch_success(self, mock_get):
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = {
-            "states": [["4b1812", "SWR123", "CH", 1641000000]]
+            "states": [["4b1812", "SWR123  ", "Switzerland", 1641000000, 1641000000, 6.5, 46.5, 10000]]
         }
 
         result = fetch_aircrafts(46.5,6.5,50)
 
         self.assertEqual(len(result),1)
-        self.assertEqual(result[0][1],"SWR123")
+        self.assertEqual(result[0]["callsign"],"SWR123")
+        self.assertEqual(result[0]["latitude"],46.5)
+        self.assertEqual(result[0]["altitude"],10000)
         mock_get.assert_called_once()
 
 
