@@ -19,8 +19,17 @@ def fetch_aircrafts(latitude, longitude,radius_km,time_stamp=None):
         #Check whether the API returns an error
         response.raise_for_status()
         data = response.json()
+        states = data.get("states",[])
 
-        return data.get("states",[])
+        formatted_planes = []
+        for state in states:
+            formatted_planes.append({
+                "callsign": state[1].strip() if state[1] else "UNKNOWN",
+                "longitude": state[5],
+                "latitude": state[6],
+                "altitude": state[7],
+            })
+        return formatted_planes
     except requests.exceptions.HTTPError as http_err:
         print(f"API error: {http_err}")
     except Exception as err:
