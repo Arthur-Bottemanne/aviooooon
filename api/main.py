@@ -65,7 +65,9 @@ async def get_aircrafts(latitude: float, longitude: float,radius: int = 100,time
                 results.append({
                     "callsign": plane.get("callsign"),
                     "azimuth": round(azimuth,2),
-                    "elevation": round(elevation,2)
+                    "elevation": round(elevation,2),
+                    "speed": plane.get("speed"),
+                    "heading": plane.get("heading")
                 })
             except Exception:
                 continue
