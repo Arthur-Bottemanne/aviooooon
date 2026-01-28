@@ -3,3 +3,4 @@ uvicorn
 skyfield
 requests
 python-dotenv
+pytest
