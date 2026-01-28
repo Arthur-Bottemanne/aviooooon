@@ -11,6 +11,12 @@ def fetch_aircrafts(latitude, longitude,radius_km,time_stamp=None):
         "lamax": bounds["lamax"],
         "lomax": bounds["lomax"]
     }
+    OPENSKY_INDEX = {
+        "CALLSIGN": 1,
+        "LONGITUDE": 5,
+        "LATITUDE": 6,
+        "BAROMETRIC_ALTITUDE": 7,
+    }
     if time_stamp:
         parameters["time"] = time_stamp
     try:
@@ -19,8 +25,17 @@ def fetch_aircrafts(latitude, longitude,radius_km,time_stamp=None):
         #Check whether the API returns an error
         response.raise_for_status()
         data = response.json()
+        states = data.get("states",[])
 
-        return data.get("states",[])
+        formatted_planes = []
+        for state in states:
+            formatted_planes.append({
+                "callsign": state[OPENSKY_INDEX["CALLSIGN"]].strip() if state[OPENSKY_INDEX["CALLSIGN"]] else "UNKNOWN",
+                "longitude": state[OPENSKY_INDEX["LONGITUDE"]],
+                "latitude": state[OPENSKY_INDEX["LATITUDE"]],
+                "altitude": state[OPENSKY_INDEX["BAROMETRIC_ALTITUDE"]],
+            })
+        return formatted_planes
     except requests.exceptions.HTTPError as http_err:
         print(f"API error: {http_err}")
     except Exception as err:
