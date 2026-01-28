@@ -12,3 +12,12 @@ export const createMockCollisionPlane = (targetLatitude, targetLongitude) => {
         isTestModeActive: true
     };
 };
+export const moveMockPlane = (plane) => {
+    const movementConstant = 0.0001; 
+
+    return {
+        ...plane,
+        latitude: plane.latitude - movementConstant,
+        longitude: plane.longitude - movementConstant
+    };
+};
