@@ -15,10 +15,14 @@ export const createMockCollisionPlane = (targetLatitude, targetLongitude) => {
     };
 };
 
-export const moveMockPlane = (plane) => {
+
+export const moveMockPlane = (plane, targetLatitude, targetLongitude) => {
+    const latitudeDirection = targetLatitude > plane.latitude ? 1 : -1;
+    const longitudeDirection = targetLongitude > plane.longitude ? 1 : -1;
+
     return {
         ...plane,
-        latitude: plane.latitude - LATITUDE_LONGITUDE_MOVEMENT_STEP,
-        longitude: plane.longitude - LATITUDE_LONGITUDE_MOVEMENT_STEP
+        latitude: plane.latitude + (LATITUDE_LONGITUDE_MOVEMENT_STEP * latitudeDirection),
+        longitude: plane.longitude + (LATITUDE_LONGITUDE_MOVEMENT_STEP * longitudeDirection)
     };
 };
