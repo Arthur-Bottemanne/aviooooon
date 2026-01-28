@@ -1,5 +1,4 @@
 import { API_ENDPOINTS } from "../config/cesium-config.js";
-import { Plane } from "../models/plane.js";
 
 export class PlaneService {
     constructor() {
@@ -24,8 +23,9 @@ export class PlaneService {
             }
 
             const data = await response.json();
+            const planes = data.data;
 
-            return planes.map((rawData) => Plane.fromApiData(rawData));
+            return planes;
         } catch (error) {
             console.error("Error fetching plane data:", error);
             return [];
