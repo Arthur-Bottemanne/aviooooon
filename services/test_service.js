@@ -1,3 +1,5 @@
+const LATITUDE_LONGITUDE_MOVEMENT_STEP = 0.0001;
+
 export const createMockCollisionPlane = (targetLatitude, targetLongitude) => {
     const startingLatitude = targetLatitude + 0.05;
     const startingLongitude = targetLongitude + 0.05;
@@ -12,12 +14,11 @@ export const createMockCollisionPlane = (targetLatitude, targetLongitude) => {
         isTestModeActive: true
     };
 };
-export const moveMockPlane = (plane) => {
-    const movementConstant = 0.0001; 
 
+export const moveMockPlane = (plane) => {
     return {
         ...plane,
-        latitude: plane.latitude - movementConstant,
-        longitude: plane.longitude - movementConstant
+        latitude: plane.latitude - LATITUDE_LONGITUDE_MOVEMENT_STEP,
+        longitude: plane.longitude - LATITUDE_LONGITUDE_MOVEMENT_STEP
     };
 };
