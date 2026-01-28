@@ -16,6 +16,8 @@ def fetch_aircrafts(latitude, longitude,radius_km,time_stamp=None):
         "LONGITUDE": 5,
         "LATITUDE": 6,
         "BAROMETRIC_ALTITUDE": 7,
+        "SPEED": 9,
+        "HEADING": 10
     }
     if time_stamp:
         parameters["time"] = time_stamp
@@ -34,6 +36,8 @@ def fetch_aircrafts(latitude, longitude,radius_km,time_stamp=None):
                 "longitude": state[OPENSKY_INDEX["LONGITUDE"]],
                 "latitude": state[OPENSKY_INDEX["LATITUDE"]],
                 "altitude": state[OPENSKY_INDEX["BAROMETRIC_ALTITUDE"]],
+                "speed": state[OPENSKY_INDEX["SPEED"]],
+                "heading": state[OPENSKY_INDEX["HEADING"]],
             })
         return formatted_planes
     except requests.exceptions.HTTPError as http_err:
