@@ -52,7 +52,10 @@ async def get_aircrafts(latitude: float, longitude: float,radius: int = 100,time
         results = []
         for plane in planes:
             try:
-                plane_latitude,plane_longitude,plane_altitude = plane[6],plane[5],plane[7]
+
+                plane_latitude = plane.get("latitude")
+                plane_longitude = plane.get("longitude")
+                plane_altitude = plane.get("altitude")
 
                 if None in (plane_latitude,plane_longitude,plane_altitude):
                     continue
@@ -60,7 +63,7 @@ async def get_aircrafts(latitude: float, longitude: float,radius: int = 100,time
                 azimuth,elevation = convert_plane_to_azimuth_elevation(latitude,longitude,plane_latitude,plane_longitude,plane_altitude)
 
                 results.append({
-                    "callsign": plane[1].strip() if plane[1] else "UNKNOWN",
+                    "callsign": plane.get("callsign"),
                     "azimuth": round(azimuth,2),
                     "elevation": round(elevation,2)
                 })
