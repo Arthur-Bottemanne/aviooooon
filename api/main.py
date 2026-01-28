@@ -60,7 +60,7 @@ async def get_aircrafts(latitude: float, longitude: float,radius: int = 100,time
             "longitude": longitude,
             "radius_km": radius,
             "requested_time": time,
-            "count": len(planes),
+            "count": len(results),
             "data": results
         }
 
