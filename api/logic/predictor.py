@@ -9,8 +9,8 @@ def predict_future_position(latitude, longitude, altitude,velocity,heading,verti
 
     heading_radians = math.radians(heading)
 
-    future_altitude = latitude + math.degrees((distance_metre * math.cos(heading_radians)) / earth_radius)
+    future_latitude = latitude + math.degrees((distance_metre * math.cos(heading_radians)) / earth_radius)
 
     future_longitude = longitude + math.degrees((distance_metre * math.sin(heading_radians)) / (earth_radius * math.cos(math.radians(latitude))))
 
-    return future_altitude, future_longitude, future_altitude
+    return future_latitude, future_longitude, future_altitude
