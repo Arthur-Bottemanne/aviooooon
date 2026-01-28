@@ -1,16 +1,28 @@
+import os
+from dotenv import load_dotenv
 from fastapi import FastAPI, Query
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 from datetime import datetime
 from api.logic.coordinate_converter import convert_plane_to_azimuth_elevation
 from services.moon import  compute_moon_position
 from services.opensky_integration import fetch_aircrafts
 
-
 app = FastAPI(
     title="Moon & Aircraft Predictor",
     description="Prediction of aircraft passing in front of the moon ",
     version="1.0",
+)
+
+load_dotenv()
+frontend_url = os.getenv("FRONTEND_URL")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[frontend_url],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.get("/moon")
