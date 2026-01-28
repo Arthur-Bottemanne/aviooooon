@@ -26,9 +26,10 @@ cd aviooooon
 npm i
 pip install -r ./api/requirements
 cp .env.example .env
+cp ./api/env.example ./api/.env
 ```
 
-Modify the `.env` file with your actual values.
+Modify the `.env` files with your actual values.
 
 3. **Run the webside:**
 ```bash
