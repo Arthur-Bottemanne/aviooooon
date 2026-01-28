@@ -2,6 +2,7 @@ from fastapi import FastAPI, Query
 from fastapi.responses import JSONResponse
 from typing import Optional
 from datetime import datetime
+from api.logic.coordinate_converter import convert_plane_to_azimuth_elevation
 from services.moon import  compute_moon_position
 from services.opensky_integration import fetch_aircrafts
 
@@ -36,6 +37,23 @@ async def get_aircrafts(latitude: float, longitude: float,radius: int = 100,time
     try:
         planes = fetch_aircrafts(latitude, longitude, radius,time_stamp=time)
 
+        results = []
+        for plane in planes:
+            try:
+                plane_latitude,plane_longitude,plane_altitude = plane[6],plane[5],plane[7]
+
+                if None in (plane_latitude,plane_longitude,plane_altitude):
+                    continue
+
+                azimuth,elevation = convert_plane_to_azimuth_elevation(latitude,longitude,plane_latitude,plane_longitude,plane_altitude)
+
+                results.append({
+                    "callsign": plane[1].strip() if plane[1] else "UNKNOWN",
+                    "azimuth": round(azimuth,2),
+                    "elevation": round(elevation,2)
+                })
+            except Exception:
+                continue
         return {
             "status": "success",
             "latitude": latitude,
@@ -43,7 +61,7 @@ async def get_aircrafts(latitude: float, longitude: float,radius: int = 100,time
             "radius_km": radius,
             "requested_time": time,
             "count": len(planes),
-            "data": planes
+            "data": results
         }
 
     except Exception as e:
