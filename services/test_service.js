@@ -9,21 +9,25 @@ export const createMockCollisionPlane = (targetLatitude, targetLongitude) => {
         latitude: startingLatitude,
         longitude: startingLongitude,
         altitudeInMeters: 1500,
-        speedInMetersPerSecond: 200, // The plane travels 200m every second
+        speedInMetersPerSecond: 200, 
         headingInDegrees: 225,
         isTestModeActive: true
     };
 };
 
 export const moveMockPlane = (plane, targetLatitude, targetLongitude) => {
-    const degreesPerSecond = plane.speedInMetersPerSecond / METERS_TO_DEGREES_RATIO;
+    // Basic step in degrees
+    const baseStep = plane.speedInMetersPerSecond / METERS_TO_DEGREES_RATIO;
+    
+    const longitudeCorrection = Math.cos(plane.latitude * (Math.PI / 180));
+    const longitudeStep = baseStep / (longitudeCorrection || 1);
 
     const latitudeDirection = targetLatitude > plane.latitude ? 1 : -1;
     const longitudeDirection = targetLongitude > plane.longitude ? 1 : -1;
 
     return {
         ...plane,
-        latitude: plane.latitude + (degreesPerSecond * latitudeDirection),
-        longitude: plane.longitude + (degreesPerSecond * longitudeDirection)
+        latitude: plane.latitude + (baseStep * latitudeDirection),
+        longitude: plane.longitude + (longitudeStep * longitudeDirection)
     };
 };
