@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 from datetime import datetime
-from api.logic.coordinate_converter import convert_plane_to_azimuth_elevation
+from logic.coordinate_converter import convert_plane_to_azimuth_elevation
 from services.moon import  compute_moon_position
 from services.opensky_integration import fetch_aircrafts
 
