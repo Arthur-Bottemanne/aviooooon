@@ -1,5 +1,5 @@
 import pytest
-from api.logic.coordinate_converter import convert_plane_to_azimuth_elevation
+from logic.coordinate_converter import convert_plane_to_azimuth_elevation
 
 
 
