@@ -1,8 +1,10 @@
 import math
+import os
 from skyfield.api import Topos,Loader
 
-
-load_data = Loader('data')
+current_dir = os.path.dirname(os.path.abspath(__file__))
+data_path = os.path.join(current_dir, '..', 'data')
+load_data = Loader(data_path)
 planets = load_data('de421.bsp')
 earth = planets['earth']
 timescale = load_data.timescale()
