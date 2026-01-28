@@ -1,3 +1,5 @@
+import { loadSavedPosition } from "../utils/local-storage"
+
 const astronomyForm = document.getElementById('astronomy-form');
 const errorMessageDisplay = document.getElementById('message-error');
 const successMessageDisplay = document.getElementById('message-success');
@@ -24,12 +26,26 @@ astronomyForm.addEventListener('submit', (event) => {
         return;
     }
 
-    const latitude = latitudeValue;
-    const longitude = longitudeValue;
-    const altitude = altitudeValue;
-    const date = dateValue;
+    const positionConfig = {
+        latitude: latitudeValue,
+        longitude: longitudeValue,
+        altitude: altitudeValue,
+        date: dateValue,
+        timestamp: new Date().toISOString()
+    };
 
+    localStorage.setItem('positionConfig', JSON.stringify(positionConfig));
 
-    console.log("Données enregistrées :", { latitude, longitude, altitude, date });
-    successMessageDisplay.innerText = "Succès ! Les coordonnées sont valides.";
+    window.location.href = "/interface/view.html";
 });
+
+window.onload = () => {
+    const config = loadSavedPosition()
+
+    if (config) {
+        document.getElementById('latitude').value = config.latitude;
+        document.getElementById('longitude').value = config.longitude;
+        document.getElementById('altitude').value = config.altitude;
+        document.getElementById('date').value = config.date;
+    }
+}
