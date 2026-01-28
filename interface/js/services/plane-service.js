@@ -1,36 +1,39 @@
 import { API_ENDPOINTS } from "../config/cesium-config.js";
-import { Aircraft } from "../models/aircraft.js";
+import { Plane } from "../models/plane.js";
 
-export class AircraftService {
+export class PlaneService {
     constructor() {
         this.updateInterval = null;
     }
 
     /**
-     * Fetches aircraft within a specified radial distance from a center point.
+     * Fetches plane within a specified radial distance from a center point.
      * @param {number} latitude - Center latitude in decimal degrees.
      * @param {number} longitude - Center longitude in decimal degrees.
      * @param {number} radius - The search radius in km.
-     * @returns {Promise<Aircraft[]>} A promise resolving to an array of mapped Aircraft instances. 
+     * @returns {Promise<Plane[]>} A promise resolving to an array of mapped plane instances.
      */
-    async fetchAircraftData(latitude, longitude, radius) {
+    async fetchPlaneData(latitude, longitude, radius) {
         try {
-            const response = await fetch(`${API_ENDPOINTS.aircraft}?lat=${latitude}&lon=${longitude}&radius=${radius}`);
+            const response = await fetch(
+                `${API_ENDPOINTS.plane}?latitude=${latitude}&longitude=${longitude}&radius=${radius}`,
+            );
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const data = await response.json();
-            return data.aircraft.map((rawData) => Aircraft.fromApiData(rawData));
+
+            return planes.map((rawData) => Plane.fromApiData(rawData));
         } catch (error) {
-            console.error("Error fetching aircraft data:", error);
+            console.error("Error fetching plane data:", error);
             return [];
         }
     }
 
     /**
-     * Initiates a periodic polling sequence to update aircraft data.
+     * Initiates a periodic polling sequence to update plane data.
      * Automatically clears any existing polling interval before starting a new one.
      * @param {Function} callback - The function to be executed at every interval.
      * @param {number} [intervalMs=60000] - The polling frequency in milliseconds (defaults to 1 minute).

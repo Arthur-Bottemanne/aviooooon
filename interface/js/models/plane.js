@@ -1,7 +1,7 @@
 import { CoordinateUtils } from "../utils/coordinates.js";
 import * as Cesium from "cesium";
 
-export class Aircraft {
+export class Plane {
     constructor(id, callsign, latitude, longitude, altitude, heading) {
         this.id = id;
         this.callsign = callsign;
@@ -16,18 +16,7 @@ export class Aircraft {
     }
 
     get icon() {
-        return "assets/aircraft-icon.png";
-    }
-
-    static fromApiData(data) {
-        return new Aircraft(
-            data.hex,
-            data.flight?.trim() || "N/A",
-            data.lat,
-            data.lon,
-            data.alt_baro * 0.3048,
-            data.track || 0
-        );
+        return "assets/plane-icon.png";
     }
 
     static fromAzimuthElevation(observerLat, observerLon, observerAlt, azimuth, elevation, range) {
@@ -37,18 +26,18 @@ export class Aircraft {
             observerAlt,
             azimuth,
             elevation,
-            range
+            range,
         );
 
         const cartographic = Cesium.Cartographic.fromCartesian(position);
 
-        return new Aircraft(
+        return new Plane(
             `az-${azimuth}-el-${elevation}`,
             "TRACKED",
             Cesium.Math.toDegrees(cartographic.latitude),
             Cesium.Math.toDegrees(cartographic.longitude),
             cartographic.height,
-            azimuth
+            azimuth,
         );
     }
 }
