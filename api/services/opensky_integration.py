@@ -11,6 +11,12 @@ def fetch_aircrafts(latitude, longitude,radius_km,time_stamp=None):
         "lamax": bounds["lamax"],
         "lomax": bounds["lomax"]
     }
+    OPENSKY_INDEX = {
+        "CALLSIGN": 1,
+        "LONGITUDE": 5,
+        "LATITUDE": 6,
+        "BAROMETRIC_ALTITUDE": 7,
+    }
     if time_stamp:
         parameters["time"] = time_stamp
     try:
@@ -24,10 +30,10 @@ def fetch_aircrafts(latitude, longitude,radius_km,time_stamp=None):
         formatted_planes = []
         for state in states:
             formatted_planes.append({
-                "callsign": state[1].strip() if state[1] else "UNKNOWN",
-                "longitude": state[5],
-                "latitude": state[6],
-                "altitude": state[7],
+                "callsign": state[OPENSKY_INDEX["CALLSIGN"]].strip() if state[OPENSKY_INDEX["CALLSIGN"]] else "UNKNOWN",
+                "longitude": state[OPENSKY_INDEX["LONGITUDE"]],
+                "latitude": state[OPENSKY_INDEX["LATITUDE"]],
+                "altitude": state[OPENSKY_INDEX["BAROMETRIC_ALTITUDE"]],
             })
         return formatted_planes
     except requests.exceptions.HTTPError as http_err:
