@@ -1,6 +1,15 @@
 import requests
 from logic.bounding_box import get_bounding_box
 
+OPENSKY_INDEX = {
+    "CALLSIGN": 1,
+    "LONGITUDE": 5,
+    "LATITUDE": 6,
+    "BAROMETRIC_ALTITUDE": 7,
+    "VELOCITY": 9,
+    "HEADING": 10,
+    "VERTICAL_RATE": 11,
+}
 
 def fetch_aircrafts(latitude, longitude,radius_km,time_stamp=None):
     bounds = get_bounding_box(latitude, longitude, radius_km)
@@ -11,12 +20,7 @@ def fetch_aircrafts(latitude, longitude,radius_km,time_stamp=None):
         "lamax": bounds["lamax"],
         "lomax": bounds["lomax"]
     }
-    OPENSKY_INDEX = {
-        "CALLSIGN": 1,
-        "LONGITUDE": 5,
-        "LATITUDE": 6,
-        "BAROMETRIC_ALTITUDE": 7,
-    }
+
     if time_stamp:
         parameters["time"] = time_stamp
     try:
@@ -34,6 +38,9 @@ def fetch_aircrafts(latitude, longitude,radius_km,time_stamp=None):
                 "longitude": state[OPENSKY_INDEX["LONGITUDE"]],
                 "latitude": state[OPENSKY_INDEX["LATITUDE"]],
                 "altitude": state[OPENSKY_INDEX["BAROMETRIC_ALTITUDE"]],
+                "velocity": state[OPENSKY_INDEX["VELOCITY"]] or 0,
+                "heading": state[OPENSKY_INDEX["HEADING"]] or 0,
+                "vertical_rate": state[OPENSKY_INDEX["VERTICAL_RATE"]] or 0,
             })
         return formatted_planes
     except requests.exceptions.HTTPError as http_err:
