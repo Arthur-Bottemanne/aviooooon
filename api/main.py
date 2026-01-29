@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 from datetime import datetime
+from logic.astro_logic import calculate_will_intersect
 from logic.coordinate_converter import convert_plane_to_azimuth_elevation
 from services.moon import  compute_moon_position
 from services.opensky_integration import fetch_aircrafts
@@ -73,8 +74,12 @@ async def get_aircrafts(latitude: float, longitude: float,radius: int = 100,time
 
                 future_azimuth,future_elevation = convert_plane_to_azimuth_elevation(latitude,longitude,future_latitude,future_longitude,future_altitude)
 
-                distance = math.sqrt((future_azimuth - moon_azimuth)**2 + (future_elevation - moon_elevation)**2)
-                will_intersect = distance <= 0.35
+                will_intersect = calculate_will_intersect(
+                    future_azimuth,
+                    moon_azimuth,
+                    future_elevation,
+                    moon_elevation,
+                )
                 results.append({
                     "callsign": plane.get("callsign"),
                     "azimuth": round(azimuth,2),
