@@ -6,11 +6,10 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 from datetime import datetime
-from logic.astro_logic import calculate_will_intersect
 from logic.coordinate_converter import convert_plane_to_azimuth_elevation
 from services.moon import  compute_moon_position
 from services.opensky_integration import fetch_aircrafts
-from logic.predictor import predict_future_position
+from logic.plane_moon_overlap_prediction import predict_future_position , calculate_will_intersect
 
 app = FastAPI(
     title="Moon & Aircraft Predictor",
