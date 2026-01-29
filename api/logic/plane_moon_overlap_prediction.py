@@ -18,6 +18,13 @@ def predict_future_position(latitude, longitude, altitude,velocity,heading,verti
 
 def calculate_will_intersect(future_azimuth,moon_azimuth,future_elevation,moon_elevation,threshold=0.35):
 
-    distance = math.sqrt((future_azimuth - moon_azimuth)**2 + (future_elevation - moon_elevation)**2)
+    delta_azimuth = abs(future_azimuth - moon_azimuth)
+    if delta_azimuth > 180:
+        delta_azimuth = 360 - delta_azimuth
 
+    average_elevation_radian = math.radians((future_elevation + moon_elevation) / 2)
+    delta_azimuth_corrected = delta_azimuth * math.cos(average_elevation_radian)
+
+    delta_elevation = future_elevation - moon_elevation
+    distance = math.sqrt(delta_azimuth_corrected**2 + delta_elevation**2)
     return distance <= threshold
