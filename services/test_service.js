@@ -10,7 +10,7 @@ export const createMockCollisionPlane = (targetLatitude, targetLongitude) => {
         longitude: startingLongitude,
         altitudeInMeters: 1500,
         speedInMetersPerSecond: 200, 
-        headingInDegrees: 225
+        headingInDegrees: 225,
         isTestModeActive: true
     };
 };
