@@ -8,13 +8,18 @@ import { MoonManager } from "./managers/moon-manager.js";
 import { PlaneManager } from "./managers/plane-manager.js";
 import { MoonService } from "./services/moon-service.js";
 import { PlaneService } from "./services/plane-service.js";
+import { AlertView } from "./views/alert-view.js";
+import { AlertController } from "./controllers/alert-controller.js";
 
 class Application {
     constructor() {
         this.managers = {};
+        this.controllers = {};
         this.moonService = new MoonService();
         this.PlaneService = new PlaneService();
         this.observerLocation = null;
+        this.testPlane = null;
+        this.testInterval = null;
         this.radius = 100;
     }
 
@@ -24,13 +29,13 @@ class Application {
 
             const viewer = await this._setupViewer();
             this._setupManagers(viewer);
+            this._setupControllers();
 
             await this._runInitialSequence();
 
             console.log("Application initialized successfully");
         } catch (error) {
             console.error("Failed to initialize application:", error);
-
             this.cleanup();
             throw error;
         }
@@ -44,7 +49,7 @@ class Application {
         return {
             latitude: config.latitude,
             longitude: config.longitude,
-            altitude: config.altitude,
+            altitude: config.altitude || 0,
         };
     }
 
@@ -60,17 +65,19 @@ class Application {
         this.managers.plane = new PlaneManager(this.managers.entity, this.PlaneService);
     }
 
+    _setupControllers() {
+        const alertView = new AlertView();
+        this.controllers.alert = new AlertController(this.managers.plane, alertView);
+    }
+
     async _runInitialSequence() {
         const { latitude, longitude, altitude } = this.observerLocation;
-
         const defaultOrientation = {
             heading: Cesium.Math.toRadians(0),
             pitch: Cesium.Math.toRadians(0),
             roll: 0.0,
         };
-
         this.managers.camera.setViewpoint(longitude, latitude, altitude, defaultOrientation);
-
         const moonPosition = await this.managers.moon.spawnMoon(latitude, longitude, altitude);
         this.managers.camera.lookAtTarget(moonPosition);
 
@@ -78,6 +85,7 @@ class Application {
     }
 
     cleanup() {
+        if (this.testInterval) clearInterval(this.testInterval);
         if (this.managers.viewer) {
             this.managers.viewer.destroy();
         }
@@ -89,6 +97,5 @@ document.addEventListener("DOMContentLoaded", () => {
     app.initialize().catch((error) => {
         alert("Failed to load map: " + error.message);
     });
-
     window.addEventListener("beforeunload", () => app.cleanup());
 });
