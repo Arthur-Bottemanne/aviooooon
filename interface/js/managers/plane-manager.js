@@ -39,8 +39,6 @@ export class PlaneManager extends EventTarget {
         this.planeService.startPolling(async () => {
             await this._updatePlanes(latitude, longitude, radius);
         });
-
-        this.notifyIntersection(undefined);
     }
 
     /**
