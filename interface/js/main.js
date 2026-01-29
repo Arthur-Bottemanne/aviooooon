@@ -5,26 +5,28 @@ import { ViewerManager } from "./managers/viewer-manager.js";
 import { EntityManager } from "./managers/entity-manager.js";
 import { CameraManager } from "./managers/camera-manager.js";
 import { MoonManager } from "./managers/moon-manager.js";
+import { PlaneManager } from "./managers/plane-manager.js";
 import { MoonService } from "./services/moon-service.js";
-
-import { createMockCollisionPlane, moveMockPlane, isCollisionPredicted } from "../../services/test_service.js";
+import { PlaneService } from "./services/plane-service.js";
 
 class Application {
     constructor() {
         this.managers = {};
         this.moonService = new MoonService();
+        this.PlaneService = new PlaneService();
         this.observerLocation = null;
         this.testPlane = null;
         this.testInterval = null;
+        this.radius = 100;
     }
 
     async initialize() {
         try {
             this.observerLocation = this._getInitialLocation();
-            
+
             const viewer = await this._setupViewer();
             this._setupManagers(viewer);
-            
+
             await this._runInitialSequence();
 
             this.startCollisionTest();
@@ -34,37 +36,6 @@ class Application {
             console.error("Failed to initialize application:", error);
             this.cleanup();
             throw error;
-        }
-    }
-
-    startCollisionTest() {
-        const { latitude, longitude } = this.observerLocation;
-        
-        this.testPlane = createMockCollisionPlane(latitude, longitude);
-
-        this.testInterval = setInterval(() => {
-            this.testPlane = moveMockPlane(this.testPlane, latitude, longitude);
-
-            if (this.managers.entity) {
-                this.managers.entity.updatePlanePosition(this.testPlane.id, this.testPlane);
-            }
-
-            this._updateAlertUI();
-        }, 1000);
-    }
-
-    _updateAlertUI() {
-        const banner = document.getElementById('collision-banner');
-        const { latitude, longitude } = this.observerLocation;
-
-        if (!banner) return;
-
-        if (isCollisionPredicted(this.testPlane, latitude, longitude)) {
-            banner.classList.remove('hidden-alert');
-            banner.classList.add('visible-alert');
-        } else {
-            banner.classList.add('hidden-alert');
-            banner.classList.remove('visible-alert');
         }
     }
 
@@ -88,7 +59,8 @@ class Application {
     _setupManagers(viewer) {
         this.managers.entity = new EntityManager(viewer);
         this.managers.camera = new CameraManager(viewer, CESIUM_CONFIG);
-        this.managers.moon   = new MoonManager(this.managers.entity, this.moonService);
+        this.managers.moon = new MoonManager(this.managers.entity, this.moonService);
+        this.managers.plane = new PlaneManager(this.managers.entity, this.PlaneService);
     }
 
     async _runInitialSequence() {
@@ -101,6 +73,8 @@ class Application {
         this.managers.camera.setViewpoint(longitude, latitude, altitude, defaultOrientation);
         const moonPosition = await this.managers.moon.spawnMoon(latitude, longitude, altitude);
         this.managers.camera.lookAtTarget(moonPosition);
+
+        await this.managers.plane.startTracking(latitude, longitude, this.radius);
     }
 
     cleanup() {
@@ -113,7 +87,7 @@ class Application {
 
 document.addEventListener("DOMContentLoaded", () => {
     const app = new Application();
-    app.initialize().catch(error => {
+    app.initialize().catch((error) => {
         alert("Failed to load map: " + error.message);
     });
     window.addEventListener("beforeunload", () => app.cleanup());
