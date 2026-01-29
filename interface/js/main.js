@@ -7,11 +7,15 @@ import { CameraManager } from "./managers/camera-manager.js";
 import { MoonManager } from "./managers/moon-manager.js";
 import { MoonService } from "./services/moon-service.js";
 
+import { createMockCollisionPlane, moveMockPlane, isCollisionPredicted } from "../../services/test_service.js";
+
 class Application {
     constructor() {
         this.managers = {};
         this.moonService = new MoonService();
         this.observerLocation = null;
+        this.testPlane = null;
+        this.testInterval = null;
     }
 
     async initialize() {
@@ -23,12 +27,44 @@ class Application {
             
             await this._runInitialSequence();
 
-            console.log("Application initialized successfully");
+            this.startCollisionTest();
+
+            console.log("Application initialized successfully with Test Mode");
         } catch (error) {
             console.error("Failed to initialize application:", error);
-
             this.cleanup();
             throw error;
+        }
+    }
+
+    startCollisionTest() {
+        const { latitude, longitude } = this.observerLocation;
+        
+        this.testPlane = createMockCollisionPlane(latitude, longitude);
+
+        this.testInterval = setInterval(() => {
+            this.testPlane = moveMockPlane(this.testPlane, latitude, longitude);
+
+            if (this.managers.entity) {
+                this.managers.entity.updatePlanePosition(this.testPlane.id, this.testPlane);
+            }
+
+            this._updateAlertUI();
+        }, 1000);
+    }
+
+    _updateAlertUI() {
+        const banner = document.getElementById('collision-banner');
+        const { latitude, longitude } = this.observerLocation;
+
+        if (!banner) return;
+
+        if (isCollisionPredicted(this.testPlane, latitude, longitude)) {
+            banner.classList.remove('hidden-alert');
+            banner.classList.add('visible-alert');
+        } else {
+            banner.classList.add('hidden-alert');
+            banner.classList.remove('visible-alert');
         }
     }
 
@@ -40,7 +76,7 @@ class Application {
         return {
             latitude: config.latitude,
             longitude: config.longitude,
-            altitude: config.altitude,
+            altitude: config.altitude || 0,
         };
     }
 
@@ -57,20 +93,18 @@ class Application {
 
     async _runInitialSequence() {
         const { latitude, longitude, altitude } = this.observerLocation;
-
         const defaultOrientation = {
             heading: Cesium.Math.toRadians(0),
             pitch: Cesium.Math.toRadians(0),
             roll: 0.0,
         };
-
         this.managers.camera.setViewpoint(longitude, latitude, altitude, defaultOrientation);
-
         const moonPosition = await this.managers.moon.spawnMoon(latitude, longitude, altitude);
         this.managers.camera.lookAtTarget(moonPosition);
     }
 
     cleanup() {
+        if (this.testInterval) clearInterval(this.testInterval);
         if (this.managers.viewer) {
             this.managers.viewer.destroy();
         }
@@ -82,6 +116,5 @@ document.addEventListener("DOMContentLoaded", () => {
     app.initialize().catch(error => {
         alert("Failed to load map: " + error.message);
     });
-
     window.addEventListener("beforeunload", () => app.cleanup());
 });
