@@ -49,7 +49,6 @@ def fetch_aircrafts(latitude, longitude, radius_km, time_stamp=None):
     }
 
     token = get_opensky_token()
-    print(token)
     headers = {"Authorization": f"Bearer {token}"} if token else {}
 
     if time_stamp:
