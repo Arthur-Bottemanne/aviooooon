@@ -20,6 +20,6 @@ export const CESIUM_CONFIG = {
 };
 
 export const API_ENDPOINTS = {
-    aircraft: import.meta.env.VITE_BASE_API_URL + "/aircraft",
+    plane: import.meta.env.VITE_BASE_API_URL + "/aircrafts",
     moon: import.meta.env.VITE_BASE_API_URL + "/moon",
 };

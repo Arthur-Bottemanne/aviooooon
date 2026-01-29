@@ -3,15 +3,15 @@ import * as Cesium from "cesium";
 export class CameraManager {
     constructor(viewer, config) {
         this.viewer = viewer;
-        this.config = config
+        this.config = config;
         this.configuration();
     }
 
     /**
      * Configures the screen-space camera controller to restrict movement types.
-     * 
+     *
      * Disables zoom, translation, and tilt while enabling a custom drag-to-look behavior.
-     * 
+     *
      * Also attaches a post-render listener to enforce camera constraints.
      * @returns {void}
      */
@@ -28,7 +28,7 @@ export class CameraManager {
         controller.zoomEventTypes = undefined;
 
         this.viewer.scene.postRender.addEventListener(() => {
-            this._fixCamera()
+            this._fixCamera();
         });
     }
 
@@ -74,22 +74,18 @@ export class CameraManager {
      */
     lookAtTarget(targetPosition) {
         const camera = this.viewer.camera;
-        
-        const direction = Cesium.Cartesian3.subtract(
-            targetPosition, 
-            camera.position, 
-            new Cesium.Cartesian3()
-        );
+
+        const direction = Cesium.Cartesian3.subtract(targetPosition, camera.position, new Cesium.Cartesian3());
         Cesium.Cartesian3.normalize(direction, direction);
 
         camera.setView({
             orientation: {
                 direction: direction,
-                up: Cesium.Cartesian3.normalize(camera.position, new Cesium.Cartesian3())
-            }
+                up: Cesium.Cartesian3.normalize(camera.position, new Cesium.Cartesian3()),
+            },
         });
     }
-    
+
     /**
      * Enforces camera safety limits to prevent "flipping" and gimbal lock.
      * @private
@@ -103,7 +99,7 @@ export class CameraManager {
 
         if (camera.pitch > maxPitch || camera.pitch < minPitch) {
             const clampedPitch = Cesium.Math.clamp(camera.pitch, minPitch, maxPitch);
-            
+
             camera.setView({
                 orientation: {
                     heading: camera.heading,

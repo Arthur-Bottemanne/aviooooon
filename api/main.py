@@ -83,6 +83,8 @@ async def get_aircrafts(latitude: float, longitude: float,radius: int = 100,time
                     "callsign": plane.get("callsign"),
                     "azimuth": round(azimuth,2),
                     "elevation": round(elevation,2),
+                    "velocity": plane.get("velocity"),
+                    "heading": plane.get("heading"),
                     "will_intersect_moon": will_intersect,
                     "predict_azimuth": round(future_azimuth,2)
                 })
