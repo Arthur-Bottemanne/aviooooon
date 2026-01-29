@@ -8,10 +8,13 @@ import { MoonManager } from "./managers/moon-manager.js";
 import { PlaneManager } from "./managers/plane-manager.js";
 import { MoonService } from "./services/moon-service.js";
 import { PlaneService } from "./services/plane-service.js";
+import { AlertView } from "./views/alert-view.js";
+import { AlertController } from "./controllers/alert-controller.js";
 
 class Application {
     constructor() {
         this.managers = {};
+        this.controllers = {};
         this.moonService = new MoonService();
         this.PlaneService = new PlaneService();
         this.observerLocation = null;
@@ -26,12 +29,11 @@ class Application {
 
             const viewer = await this._setupViewer();
             this._setupManagers(viewer);
+            this._setupControllers();
 
             await this._runInitialSequence();
 
-            this.startCollisionTest();
-
-            console.log("Application initialized successfully with Test Mode");
+            console.log("Application initialized successfully");
         } catch (error) {
             console.error("Failed to initialize application:", error);
             this.cleanup();
@@ -61,6 +63,11 @@ class Application {
         this.managers.camera = new CameraManager(viewer, CESIUM_CONFIG);
         this.managers.moon = new MoonManager(this.managers.entity, this.moonService);
         this.managers.plane = new PlaneManager(this.managers.entity, this.PlaneService);
+    }
+
+    _setupControllers() {
+        const alertView = new AlertView();
+        this.controllers.alert = new AlertController(this.managers.plane, alertView);
     }
 
     async _runInitialSequence() {

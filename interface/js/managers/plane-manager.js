@@ -2,14 +2,26 @@ import * as Cesium from "cesium";
 import { loadSavedPosition } from "../utils/local-storage";
 import { CoordinateUtils } from "../utils/coordinates";
 
-export class PlaneManager {
+export class PlaneManager extends EventTarget {
     constructor(entityManager, planeService) {
+        super();
         this.entityManager = entityManager;
         this.planeService = planeService;
         this.modelUrl = "/interface/assets/models/plane.glb";
         this.trackedPlaneIds = new Set();
+        this.alertedPlanes = new Set();
         this.planeHistory = new Map();
         this.maxTrailSize = 3;
+    }
+
+    /**
+     * Notifies subscribed elements that a plane will intersect with the moon.
+     */
+    notifyIntersection(plane) {
+        const event = new CustomEvent("moonIntersection", {
+            detail: plane,
+        });
+        this.dispatchEvent(event);
     }
 
     /**
@@ -27,6 +39,8 @@ export class PlaneManager {
         this.planeService.startPolling(async () => {
             await this._updatePlanes(latitude, longitude, radius);
         });
+
+        this.notifyIntersection(undefined);
     }
 
     /**
@@ -52,6 +66,11 @@ export class PlaneManager {
             const id = String(plane.callsign);
             currentBatchIds.add(id);
             this._renderPlane(plane, id);
+            if (plane.willIntersectMoon) {
+                this.notifyIntersection(plane);
+            } else if (!plane.willIntersectMoon && this.alertedPlanes.has(plane.id)) {
+                this.alertedPlanes.delete(plane.id);
+            }
         }
 
         for (const id of this.trackedPlaneIds) {
