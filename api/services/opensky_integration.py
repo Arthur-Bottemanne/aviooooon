@@ -52,15 +52,6 @@ def fetch_aircrafts(latitude, longitude, radius_km, time_stamp=None):
     print(token)
     headers = {"Authorization": f"Bearer {token}"} if token else {}
 
-    OPENSKY_INDEX = {
-        "CALLSIGN": 1,
-        "LONGITUDE": 5,
-        "LATITUDE": 6,
-        "BAROMETRIC_ALTITUDE": 7,
-        "VELOCITY": 9,
-        "HEADING": 10
-    }
-
     if time_stamp:
         parameters["time"] = time_stamp
     
@@ -83,7 +74,7 @@ def fetch_aircrafts(latitude, longitude, radius_km, time_stamp=None):
                 "altitude": state[OPENSKY_INDEX["BAROMETRIC_ALTITUDE"]],
                 "velocity": state[OPENSKY_INDEX["VELOCITY"]] or 0,
                 "heading": state[OPENSKY_INDEX["HEADING"]] or 0,
-                "vertical_rate": state[OPENSKY_INDEX["VERTICAL_RATE"]] or 0,
+                "vertical_rate": state[OPENSKY_INDEX["VERTICAL_RATE"]] or 0
             })
         return formatted_planes
 
