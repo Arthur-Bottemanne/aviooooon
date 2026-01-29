@@ -1,0 +1,16 @@
+.hidden-alert {
+    display: none;
+}
+
+.visible-alert {
+    display: block;
+    background-color: red;
+    color: white;
+    position: absolute;
+    top: 20px;
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    z-index: 1000;
+}
