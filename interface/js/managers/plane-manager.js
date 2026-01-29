@@ -8,6 +8,8 @@ export class PlaneManager {
         this.planeService = planeService;
         this.modelUrl = "/interface/assets/models/plane.glb";
         this.trackedPlaneIds = new Set();
+        this.planeHistory = new Map();
+        this.maxTrailSize = 3;
     }
 
     /**
@@ -34,6 +36,7 @@ export class PlaneManager {
         this.planeService.stopPolling();
         this.trackedPlaneIds.forEach((id) => this.entityManager.remove(id));
         this.trackedPlaneIds.clear();
+        this.planeHistory.clear();
     }
 
     /**
@@ -46,15 +49,16 @@ export class PlaneManager {
         const currentBatchIds = new Set();
 
         for (const plane of planes) {
-            const uniqueId = String(plane.callsign);
-            currentBatchIds.add(uniqueId);
-            this._renderPlane(plane, uniqueId);
+            const id = String(plane.callsign);
+            currentBatchIds.add(id);
+            this._renderPlane(plane, id);
         }
 
         for (const id of this.trackedPlaneIds) {
             if (!currentBatchIds.has(id)) {
                 this.entityManager.remove(id);
                 this.trackedPlaneIds.delete(id);
+                this.planeHistory.delete(id);
             }
         }
     }
@@ -64,7 +68,7 @@ export class PlaneManager {
      * @private
      * @param {Object} plane - The plane data object.
      */
-    _renderPlane(plane, uniqueId) {
+    _renderPlane(plane, id) {
         const observer = loadSavedPosition();
 
         if (!observer?.latitude || !observer?.longitude) {
@@ -83,24 +87,48 @@ export class PlaneManager {
             range,
         );
 
+        if (!this.planeHistory.has(id)) {
+            this.planeHistory.set(id, []);
+        }
+        const history = this.planeHistory.get(id);
+
+        history.push(position);
+
+        if (history.length > this.maxTrailSize) {
+            history.shift();
+        }
+
         const heading = Cesium.Math.toRadians(plane.heading || 0);
         const hpr = new Cesium.HeadingPitchRoll(heading, 0, 0);
         const orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr);
-
         const description = this._buildDescription(plane);
 
-        if (this.trackedPlaneIds.has(uniqueId)) {
-            this.entityManager.update(uniqueId, {
+        const polyline =
+            history.length > 1
+                ? {
+                      positions: history,
+                      width: 2,
+                      material: new Cesium.PolylineDashMaterialProperty({
+                          color: Cesium.Color.GREEN,
+                          dashLength: 16,
+                      }),
+                  }
+                : undefined;
+
+        if (this.trackedPlaneIds.has(id)) {
+            this.entityManager.update(id, {
                 position: position,
                 orientation: orientation,
                 description: description,
+                polyline: polyline,
             });
         } else {
-            this.entityManager.add(uniqueId, {
+            this.entityManager.add(id, {
                 name: `Flight ${plane.callsign || "Unknown"}`,
                 position: position,
                 orientation: orientation,
                 description: description,
+                polyline: polyline,
                 model: {
                     uri: this.modelUrl,
                     minimumPixelSize: 64,
@@ -108,7 +136,7 @@ export class PlaneManager {
                     runAnimations: true,
                 },
                 label: {
-                    text: `✈ ${plane.callsign || uniqueId}`,
+                    text: `✈ ${plane.callsign || id}`,
                     font: "14px monospace",
                     style: Cesium.LabelStyle.FILL_AND_OUTLINE,
                     fillColor: Cesium.Color.WHITE,
@@ -118,7 +146,7 @@ export class PlaneManager {
                     disableDepthTestDistance: Number.POSITIVE_INFINITY,
                 },
             });
-            this.trackedPlaneIds.add(uniqueId);
+            this.trackedPlaneIds.add(id);
         }
     }
 
@@ -133,7 +161,7 @@ export class PlaneManager {
             <table class="cesium-infoBox-defaultTable">
                 <tbody>
                     <tr><th>Callsign</th><td>${plane.callsign || "N/A"}</td></tr>
-                    <tr><th>Velocity</th><td>${plane.speed ? Math.round(plane.speed) + " m/s" : "N/A"}</td></tr>
+                    <tr><th>Velocity</th><td>${plane.velocity ? Math.round(plane.velocity) + " m/s" : "N/A"}</td></tr>
                     <tr><th>Heading</th><td>${plane.heading ? Math.round(plane.heading) + "°" : "N/A"}</td></tr>
                 </tbody>
             </table>
